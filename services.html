@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Services & Pricing — Victor Igbaji Ogabor | VIO</title>
+<meta name="description" content="Professional web design, development, branding, and strategy services by Victor Igbaji Ogabor. Starting from $199. Global clients welcome."/>
+<link rel="canonical" href="https://vioportfolio.name.ng/services.html"/>
+<link rel="icon" type="image/png" href="/favicon.png"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link rel="stylesheet" media="print" onload="this.media='all'" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500&display=swap"/>
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+:root{
+  --navy:#0A1628;--navy-2:#0F2040;--navy-3:#162D56;--navy-4:#1E3A6E;
+  --orange:#E8621A;--orange-2:#F07835;--orange-3:#FFA45C;--orange-light:#FFF0E6;
+  --white:#FFFFFF;--off:#F7F8FC;--border:#E4E8F0;
+  --text:#1A2B4A;--muted:#6B7A99;--card:#FFFFFF;--bg:#F7F8FC;
+  --nav-bg:rgba(247,248,252,0.95);--section-alt:#F0F4FF;--green:#16A34A;
+}
+body.dark{
+  --off:#0F1E35;--border:#1E3A6E;--text:#E8EEF8;--muted:#7A90B8;
+  --card:#0F2040;--bg:#0A1628;--nav-bg:rgba(10,22,40,0.97);--section-alt:#0D1B30;
+}
+html{scroll-behavior:smooth;}
+body{font-family:'Plus Jakarta Sans',sans-serif;background:var(--bg);color:var(--text);overflow-x:hidden;transition:background 0.3s,color 0.3s;}
+nav{position:fixed;top:0;left:0;right:0;z-index:200;display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:72px;background:var(--nav-bg);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);}
+.nav-logo img{height:36px;width:auto;}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{font-size:14px;font-weight:500;color:var(--muted);text-decoration:none;transition:color 0.2s;}
+.nav-links a:hover,.nav-links a.active{color:var(--orange);}
+.nav-right{display:flex;align-items:center;gap:12px;}
+.nav-cta{font-size:13px;font-weight:600;color:#fff;background:var(--orange);padding:10px 24px;border-radius:100px;text-decoration:none;transition:all 0.2s;}
+.nav-cta:hover{background:var(--orange-2);transform:translateY(-1px);}
+.dark-toggle{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);background:var(--card);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:16px;transition:all 0.2s;}
+.hamburger{display:none;flex-direction:column;gap:5px;background:none;border:none;cursor:pointer;padding:4px;}
+.hamburger span{display:block;width:24px;height:2px;background:var(--text);border-radius:2px;transition:transform 0.3s,opacity 0.3s;}
+.hamburger.open span:nth-child(1){transform:translateY(7px) rotate(45deg);}
+.hamburger.open span:nth-child(2){opacity:0;}
+.hamburger.open span:nth-child(3){transform:translateY(-7px) rotate(-45deg);}
+.nav-drawer{display:none;position:fixed;top:72px;left:0;right:0;z-index:199;background:var(--card);border-bottom:1px solid var(--border);padding:20px 28px 28px;flex-direction:column;opacity:0;transform:translateY(-10px);transition:opacity 0.3s,transform 0.3s;}
+.nav-drawer.open{opacity:1;transform:translateY(0);}
+.nav-drawer a{font-size:16px;font-weight:500;color:var(--text);text-decoration:none;padding:14px 0;border-bottom:1px solid var(--border);display:block;}
+.nav-drawer .drawer-cta{margin-top:16px;background:var(--orange);color:#fff;text-align:center;border-radius:100px;padding:14px;font-weight:600;font-size:14px;text-decoration:none;display:block;}
+.page-hero{padding:120px 60px 64px;background:var(--bg);position:relative;overflow:hidden;}
+.page-hero::before{content:'';position:absolute;top:-100px;right:-100px;width:600px;height:600px;background:radial-gradient(circle,rgba(232,98,26,0.07) 0%,transparent 70%);pointer-events:none;}
+.section-tag{display:inline-flex;align-items:center;gap:8px;font-family:'IBM Plex Mono',monospace;font-size:11px;font-weight:500;letter-spacing:0.12em;text-transform:uppercase;color:var(--orange);margin-bottom:16px;}
+.section-tag::before{content:'';width:24px;height:2px;background:var(--orange);}
+.page-title{font-weight:800;font-size:clamp(36px,5vw,64px);line-height:1.1;letter-spacing:-1.5px;color:var(--text);margin-bottom:16px;}
+.page-title span{color:var(--orange);}
+.page-desc{font-size:17px;color:var(--muted);max-width:580px;line-height:1.7;margin-bottom:32px;}
+.hero-badges{display:flex;flex-wrap:wrap;gap:10px;}
+.hero-badge{display:inline-flex;align-items:center;gap:7px;font-size:13px;font-weight:600;padding:8px 16px;border-radius:100px;border:1px solid var(--border);background:var(--card);color:var(--text);}
+.dot{width:7px;height:7px;border-radius:50%;}
+.dot-green{background:var(--green);}
+.dot-orange{background:var(--orange);}
+.services-overview{padding:64px 60px;background:var(--section-alt);}
+.sh{font-weight:800;font-size:clamp(24px,3.5vw,40px);letter-spacing:-1px;color:var(--text);margin-bottom:12px;}
+.sd{font-size:15px;color:var(--muted);max-width:520px;line-height:1.7;}
+.services-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:48px;}
+.service-card{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:24px;transition:all 0.25s;text-decoration:none;display:block;}
+.service-card:hover{border-color:var(--orange);transform:translateY(-4px);box-shadow:0 12px 40px rgba(232,98,26,0.1);}
+.service-icon{width:48px;height:48px;border-radius:12px;background:linear-gradient(135deg,var(--orange),var(--orange-2));display:flex;align-items:center;justify-content:center;font-size:22px;margin-bottom:16px;}
+.service-name{font-size:15px;font-weight:700;color:var(--text);margin-bottom:6px;}
+.service-desc{font-size:13px;color:var(--muted);line-height:1.6;}
+.service-from{font-size:12px;font-weight:700;color:var(--orange);margin-top:12px;font-family:'IBM Plex Mono',monospace;}
+.pricing-section{padding:80px 60px;background:var(--bg);}
+.pricing-intro{max-width:600px;margin-bottom:56px;}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;}
+.pricing-card{background:var(--card);border:1px solid var(--border);border-radius:24px;padding:36px;position:relative;overflow:hidden;transition:all 0.25s;}
+.pricing-card:hover{transform:translateY(-4px);box-shadow:0 16px 48px rgba(232,98,26,0.1);}
+.pricing-card.featured{border-color:var(--orange);background:var(--navy);}
+.pricing-card.featured::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--orange),var(--orange-3));}
+.featured-badge{position:absolute;top:20px;right:20px;font-size:10px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--orange);background:rgba(232,98,26,0.12);border:1px solid rgba(232,98,26,0.3);padding:4px 12px;border-radius:100px;}
+.plan-name{font-family:'IBM Plex Mono',monospace;font-size:11px;letter-spacing:0.14em;text-transform:uppercase;color:var(--muted);margin-bottom:12px;}
+.pricing-card.featured .plan-name{color:rgba(255,255,255,0.45);}
+.plan-price{font-size:48px;font-weight:800;color:var(--text);letter-spacing:-2px;line-height:1;margin-bottom:4px;}
+.pricing-card.featured .plan-price{color:#fff;}
+.plan-price span{font-size:20px;font-weight:600;letter-spacing:0;}
+.plan-period{font-size:12px;color:var(--muted);margin-bottom:24px;}
+.pricing-card.featured .plan-period{color:rgba(255,255,255,0.4);}
+.plan-desc{font-size:14px;color:var(--muted);line-height:1.65;margin-bottom:28px;padding-bottom:28px;border-bottom:1px solid var(--border);}
+.pricing-card.featured .plan-desc{color:rgba(255,255,255,0.55);border-color:rgba(255,255,255,0.1);}
+.plan-features{list-style:none;display:flex;flex-direction:column;gap:12px;margin-bottom:32px;}
+.plan-features li{font-size:14px;color:var(--text);display:flex;align-items:flex-start;gap:10px;line-height:1.5;}
+.pricing-card.featured .plan-features li{color:rgba(255,255,255,0.8);}
+.check{color:var(--green);font-size:16px;flex-shrink:0;margin-top:1px;}
+.cross{color:var(--muted);font-size:16px;flex-shrink:0;margin-top:1px;}
+.plan-cta{display:block;text-align:center;font-size:14px;font-weight:700;padding:14px;border-radius:100px;text-decoration:none;transition:all 0.2s;border:1.5px solid var(--border);color:var(--text);background:transparent;cursor:pointer;font-family:'Plus Jakarta Sans',sans-serif;width:100%;}
+.plan-cta:hover{border-color:var(--orange);color:var(--orange);}
+.plan-cta.featured-cta{background:var(--orange);border-color:var(--orange);color:#fff;}
+.plan-cta.featured-cta:hover{background:var(--orange-2);box-shadow:0 8px 24px rgba(232,98,26,0.35);}
+.custom-section{padding:0 60px 80px;}
+.custom-card{background:var(--navy);border-radius:24px;padding:48px 56px;display:grid;grid-template-columns:1fr auto;gap:40px;align-items:center;position:relative;overflow:hidden;}
+.custom-card::before{content:'';position:absolute;top:-100px;right:-100px;width:400px;height:400px;background:radial-gradient(circle,rgba(232,98,26,0.15) 0%,transparent 70%);pointer-events:none;}
+.custom-title{font-size:clamp(24px,3vw,36px);font-weight:800;color:#fff;letter-spacing:-0.5px;margin-bottom:12px;}
+.custom-title span{color:var(--orange-3);}
+.custom-desc{font-size:15px;color:rgba(255,255,255,0.5);line-height:1.7;max-width:520px;}
+.custom-cta{background:var(--orange);color:#fff;font-size:14px;font-weight:700;padding:16px 36px;border-radius:100px;text-decoration:none;white-space:nowrap;transition:all 0.2s;display:inline-block;}
+.custom-cta:hover{background:var(--orange-2);transform:translateY(-2px);box-shadow:0 8px 24px rgba(232,98,26,0.35);}
+.payment-section{padding:64px 60px;background:var(--section-alt);}
+.payment-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-top:40px;}
+.payment-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;text-align:center;transition:all 0.2s;}
+.payment-card:hover{border-color:var(--orange);transform:translateY(-2px);}
+.payment-icon{font-size:32px;margin-bottom:12px;}
+.payment-name{font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.payment-desc{font-size:12px;color:var(--muted);}
+.process-section{padding:80px 60px;background:var(--bg);}
+.process-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-top:48px;}
+.process-num{font-family:'IBM Plex Mono',monospace;font-size:48px;font-weight:700;color:var(--orange);opacity:0.15;line-height:1;margin-bottom:12px;}
+.process-title{font-size:15px;font-weight:700;color:var(--text);margin-bottom:8px;}
+.process-desc{font-size:13px;color:var(--muted);line-height:1.65;}
+.faq-section{padding:64px 60px 80px;background:var(--section-alt);}
+.faq-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-top:48px;}
+.faq-item{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px 28px;}
+.faq-q{font-size:15px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.faq-a{font-size:14px;color:var(--muted);line-height:1.65;}
+footer{background:var(--navy);border-top:1px solid rgba(255,255,255,0.07);padding:24px 60px;display:flex;align-items:center;justify-content:space-between;}
+footer p{font-family:'IBM Plex Mono',monospace;font-size:11px;color:rgba(255,255,255,0.25);letter-spacing:0.05em;}
+footer p span{color:var(--orange-3);}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity 0.7s ease,transform 0.7s ease;}
+.reveal.visible{opacity:1;transform:translateY(0);}
+@media(max-width:1024px){
+  nav{padding:0 40px;}
+  .page-hero,.services-overview,.pricing-section,.custom-section,.payment-section,.process-section,.faq-section{padding-left:40px;padding-right:40px;}
+  footer{padding:24px 40px;}
+  .services-grid{grid-template-columns:repeat(2,1fr);}
+  .process-grid{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:900px){
+  nav{padding:0 28px;}.nav-links,.nav-cta{display:none;}.hamburger{display:flex;}.nav-drawer{display:flex;}
+  .page-hero,.services-overview,.pricing-section,.custom-section,.payment-section,.process-section,.faq-section{padding-left:28px;padding-right:28px;}
+  .pricing-grid{grid-template-columns:1fr;}
+  .faq-grid{grid-template-columns:1fr;}
+  .payment-grid{grid-template-columns:repeat(2,1fr);}
+  .custom-card{grid-template-columns:1fr;text-align:center;padding:36px 28px;}
+  footer{flex-direction:column;gap:8px;text-align:center;padding:20px 28px;}
+}
+@media(max-width:560px){
+  nav{padding:0 20px;}.page-hero{padding:100px 20px 48px;}
+  .services-overview,.pricing-section,.custom-section,.payment-section,.process-section,.faq-section{padding-left:20px;padding-right:20px;}
+  .services-grid,.process-grid{grid-template-columns:1fr;}
+  .payment-grid{grid-template-columns:1fr 1fr;}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/index.html" class="nav-logo"><img src="data:image/png;base64,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" alt="VIO"/></a>
+  <ul class="nav-links">
+    <li><a href="/index.html">Home</a></li>
+    <li><a href="/index.html#about">About</a></li>
+    <li><a href="/works.html">Works</a></li>
+    <li><a href="/services.html" class="active">Services</a></li>
+    <li><a href="/index.html#contact">Contact</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="dark-toggle" id="dark-toggle" aria-label="Toggle dark mode">🌙</button>
+    <a href="https://wa.me/2348146589595" target="_blank" class="nav-cta">Get Started</a>
+    <button class="hamburger" id="hamburger" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div class="nav-drawer" id="nav-drawer">
+  <a href="/index.html" onclick="closeDrawer()">Home</a>
+  <a href="/index.html#about" onclick="closeDrawer()">About</a>
+  <a href="/works.html" onclick="closeDrawer()">Works</a>
+  <a href="/services.html" onclick="closeDrawer()">Services</a>
+  <a href="/index.html#contact" onclick="closeDrawer()">Contact</a>
+  <a href="https://wa.me/2348146589595" target="_blank" class="drawer-cta" onclick="closeDrawer()">Get Started</a>
+</div>
+
+<div class="page-hero">
+  <div class="section-tag">Services & Pricing</div>
+  <h1 class="page-title">Real Work.<br/><span>Real Results.</span></h1>
+  <p class="page-desc">I work with founders, brands, and businesses globally to design and build digital products that communicate clearly, perform reliably, and convert consistently. Starting from $199.</p>
+  <div class="hero-badges">
+    <span class="hero-badge"><span class="dot dot-green"></span> Available for New Projects</span>
+    <span class="hero-badge"><span class="dot dot-orange"></span> Global Clients Welcome</span>
+    <span class="hero-badge">⚡ Fast Turnaround</span>
+    <span class="hero-badge">🌍 Remote-First</span>
+  </div>
+</div>
+
+<section class="services-overview">
+  <div class="reveal">
+    <div class="section-tag">What I Do</div>
+    <h2 class="sh">Every Service You Need.<br/>One Person You Can Trust.</h2>
+    <p class="sd">From a single landing page to a complete brand identity — handled with the same level of craft and commitment.</p>
+  </div>
+  <div class="services-grid">
+    <div class="service-card reveal">
+      <div class="service-icon">🌐</div>
+      <div class="service-name">Website Design & Development</div>
+      <div class="service-desc">Fast, responsive, SEO-ready websites built to convert visitors into clients.</div>
+      <div class="service-from">From $199</div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">📱</div>
+      <div class="service-name">Mobile App Development</div>
+      <div class="service-desc">Cross-platform mobile apps built with React Native and Expo for iOS and Android.</div>
+      <div class="service-from">From $499</div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🎨</div>
+      <div class="service-name">Graphic Design & Branding</div>
+      <div class="service-desc">Logos, brand kits, flyers, and visual systems that make your brand unmistakable.</div>
+      <div class="service-from">From $99</div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">🖼</div>
+      <div class="service-name">UI / UX Design</div>
+      <div class="service-desc">Clean, intuitive interfaces designed with real users in mind — Figma-first workflow.</div>
+      <div class="service-from">From $149</div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">✍</div>
+      <div class="service-name">Content Writing & Copywriting</div>
+      <div class="service-desc">Website copy, brand messaging, and content that speaks clearly and persuades effectively.</div>
+      <div class="service-from">From $79</div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">📊</div>
+      <div class="service-name">Brand Strategy</div>
+      <div class="service-desc">Positioning, messaging frameworks, and identity systems that give your brand direction.</div>
+      <div class="service-from">From $199</div>
+    </div>
+    <div class="service-card reveal">
+      <div class="service-icon">📣</div>
+      <div class="service-name">Social Media Design</div>
+      <div class="service-desc">Scroll-stopping graphics, post templates, and visual systems for your social presence.</div>
+      <div class="service-from">From $49</div>
+    </div>
+    <div class="service-card reveal" style="border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:transparent;">
+      <div style="font-size:32px;margin-bottom:12px;">✦</div>
+      <div class="service-name">Custom Project?</div>
+      <div class="service-desc">Have something specific in mind? Let's talk and build the right solution together.</div>
+      <a href="https://wa.me/2348146589595" target="_blank" style="font-size:12px;font-weight:700;color:var(--orange);margin-top:12px;text-decoration:none;">Talk to me →</a>
+    </div>
+  </div>
+</section>
+
+<section class="pricing-section">
+  <div class="pricing-intro reveal">
+    <div class="section-tag">Pricing</div>
+    <h2 class="sh">Clear Pricing.<br/>No Surprises.</h2>
+    <p class="sd">Packages built around the most common needs. Not sure which fits? Start a conversation — we'll figure it out together.</p>
+  </div>
+  <div class="pricing-grid">
+    <div class="pricing-card reveal">
+      <div class="plan-name">Basic</div>
+      <div class="plan-price"><span>$</span>199</div>
+      <div class="plan-period">One-time · Delivered in 7 days</div>
+      <div class="plan-desc">Perfect for freelancers, creators, and small businesses that need a clean, professional online presence fast.</div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Up to 3-page website</li>
+        <li><span class="check">✓</span> Mobile responsive design</li>
+        <li><span class="check">✓</span> Basic SEO setup</li>
+        <li><span class="check">✓</span> Contact form integration</li>
+        <li><span class="check">✓</span> 2 rounds of revision</li>
+        <li><span class="check">✓</span> Deployed & live</li>
+        <li><span class="cross">✗</span> Custom backend / database</li>
+        <li><span class="cross">✗</span> Brand strategy session</li>
+        <li><span class="cross">✗</span> Priority support</li>
+      </ul>
+      <a href="https://wa.me/2348146589595?text=Hi Victor, I'm interested in the Basic package ($199)" target="_blank" class="plan-cta">Get Started →</a>
+    </div>
+    <div class="pricing-card featured reveal">
+      <div class="featured-badge">Most Popular</div>
+      <div class="plan-name">Standard</div>
+      <div class="plan-price"><span>$</span>499</div>
+      <div class="plan-period">One-time · Delivered in 14 days</div>
+      <div class="plan-desc">For growing businesses that need a complete, high-performing digital product with design, development, and strategy.</div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Up to 7-page website</li>
+        <li><span class="check">✓</span> Custom UI/UX design (Figma)</li>
+        <li><span class="check">✓</span> Full SEO optimization</li>
+        <li><span class="check">✓</span> Backend & database integration</li>
+        <li><span class="check">✓</span> Brand strategy session (1hr)</li>
+        <li><span class="check">✓</span> Social media design kit (5 templates)</li>
+        <li><span class="check">✓</span> 5 rounds of revision</li>
+        <li><span class="check">✓</span> 30-day post-launch support</li>
+        <li><span class="check">✓</span> Priority communication</li>
+      </ul>
+      <a href="https://wa.me/2348146589595?text=Hi Victor, I'm interested in the Standard package ($499)" target="_blank" class="plan-cta featured-cta">Get Started →</a>
+    </div>
+    <div class="pricing-card reveal">
+      <div class="plan-name">Premium</div>
+      <div class="plan-price"><span>$</span>999</div>
+      <div class="plan-period">One-time · Delivered in 21 days</div>
+      <div class="plan-desc">The complete brand and digital experience — for businesses serious about making a lasting impression online.</div>
+      <ul class="plan-features">
+        <li><span class="check">✓</span> Unlimited pages</li>
+        <li><span class="check">✓</span> Full brand identity system</li>
+        <li><span class="check">✓</span> Custom web or mobile app</li>
+        <li><span class="check">✓</span> Advanced backend & APIs</li>
+        <li><span class="check">✓</span> Full copywriting for all pages</li>
+        <li><span class="check">✓</span> Complete social media design kit</li>
+        <li><span class="check">✓</span> <strong>Unlimited revisions</strong></li>
+        <li><span class="check">✓</span> 90-day post-launch support</li>
+        <li><span class="check">✓</span> Direct line of communication</li>
+      </ul>
+      <a href="https://wa.me/2348146589595?text=Hi Victor, I'm interested in the Premium package ($999)" target="_blank" class="plan-cta">Get Started →</a>
+    </div>
+  </div>
+</section>
+
+<div class="custom-section">
+  <div class="custom-card reveal">
+    <div>
+      <h2 class="custom-title">Need Something <span>Custom?</span></h2>
+      <p class="custom-desc">Every business is different. If none of the packages fit exactly what you need — a retainer arrangement, a specific tool, a unique project scope — let's talk and build something that works for you specifically.</p>
+    </div>
+    <a href="https://wa.me/2348146589595?text=Hi Victor, I have a custom project I'd like to discuss" target="_blank" class="custom-cta">Let's Talk →</a>
+  </div>
+</div>
+
+<section class="payment-section">
+  <div class="reveal">
+    <div class="section-tag">Payment</div>
+    <h2 class="sh">Flexible Payment Methods</h2>
+    <p class="sd">Global clients welcome. Pay in the way that works best for you. 50% upfront, 50% on delivery.</p>
+  </div>
+  <div class="payment-grid">
+    <div class="payment-card reveal"><div class="payment-icon">💳</div><div class="payment-name">Paystack</div><div class="payment-desc">Card payments via Paystack — fast and secure</div></div>
+    <div class="payment-card reveal"><div class="payment-icon">🏦</div><div class="payment-name">Bank Transfer</div><div class="payment-desc">Direct bank transfer — local and international</div></div>
+    <div class="payment-card reveal"><div class="payment-icon">₿</div><div class="payment-name">Crypto</div><div class="payment-desc">Bitcoin, USDT, and other major cryptocurrencies</div></div>
+    <div class="payment-card reveal"><div class="payment-icon">🔄</div><div class="payment-name">Grey & Others</div><div class="payment-desc">Grey app and other arrangements on request</div></div>
+  </div>
+</section>
+
+<section class="process-section">
+  <div class="reveal">
+    <div class="section-tag">How It Works</div>
+    <h2 class="sh">Simple. Transparent. Fast.</h2>
+    <p class="sd">From first message to final delivery — here's exactly how we work together.</p>
+  </div>
+  <div class="process-grid">
+    <div class="reveal"><div class="process-num">01</div><div class="process-title">Discovery Call</div><div class="process-desc">We talk about your goals, target audience, timeline, and expectations so nothing gets missed.</div></div>
+    <div class="reveal"><div class="process-num">02</div><div class="process-title">Proposal & Agreement</div><div class="process-desc">I send a clear proposal with scope, timeline, and price. 50% deposit confirms the start.</div></div>
+    <div class="reveal"><div class="process-num">03</div><div class="process-title">Design & Build</div><div class="process-desc">I work through your project with regular updates and check-ins. Feedback at every stage.</div></div>
+    <div class="reveal"><div class="process-num">04</div><div class="process-title">Deliver & Support</div><div class="process-desc">Final delivery with full handover. I stay available for support during the agreed period.</div></div>
+  </div>
+</section>
+
+<section class="faq-section">
+  <div class="reveal">
+    <div class="section-tag">FAQ</div>
+    <h2 class="sh">Common Questions</h2>
+  </div>
+  <div class="faq-grid">
+    <div class="faq-item reveal"><div class="faq-q">Do you work with clients outside Nigeria?</div><div class="faq-a">Absolutely. Most of my clients are international. I work remotely with teams and individuals across Africa, Europe, North America, and beyond. Communication is async-friendly.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">How does the revision process work?</div><div class="faq-a">Basic gets 2 rounds, Standard gets 5 rounds, and Premium gets unlimited revisions until you are 100% satisfied. Revisions are structured per milestone, not open-ended.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">Can I pay in installments?</div><div class="faq-a">Yes. The standard arrangement is 50% upfront to begin and 50% on delivery. For larger projects we can discuss a milestone-based payment schedule.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">What if I need something not listed here?</div><div class="faq-a">Just reach out. I handle a wide range of digital work and I am open to custom scopes, retainer arrangements, and project-based collaborations not covered by standard packages.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">How do we communicate during the project?</div><div class="faq-a">Primarily via WhatsApp or email. I send progress updates at key milestones and am responsive during business hours across most time zones.</div></div>
+    <div class="faq-item reveal"><div class="faq-q">Do you offer ongoing maintenance?</div><div class="faq-a">Yes. After the included support period, I offer monthly maintenance retainers for updates, security, and improvements. Pricing depends on the scope required.</div></div>
+  </div>
+</section>
+
+<footer>
+  <p>&copy; 2026 <span>VIO</span> · Victor Igbaji Ogabor · All Rights Reserved</p>
+  <p><a href="/index.html" style="color:var(--orange-3);text-decoration:none;">← Back to Portfolio</a></p>
+</footer>
+
+<script>
+const toggle=document.getElementById('dark-toggle');
+if(localStorage.getItem('vio-theme')==='dark'){document.body.classList.add('dark');toggle.textContent='☀️';}
+toggle.addEventListener('click',()=>{document.body.classList.toggle('dark');const dark=document.body.classList.contains('dark');toggle.textContent=dark?'☀️':'🌙';localStorage.setItem('vio-theme',dark?'dark':'light');});
+const hamburger=document.getElementById('hamburger');
+const drawer=document.getElementById('nav-drawer');
+function closeDrawer(){hamburger.classList.remove('open');drawer.classList.remove('open');}
+hamburger.addEventListener('click',()=>{hamburger.classList.toggle('open');drawer.classList.toggle('open');});
+const obs=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting)e.target.classList.add('visible');});},{threshold:0.1});
+document.querySelectorAll('.reveal').forEach(el=>obs.observe(el));
+</script>
+<script defer src="/_vercel/insights/script.js"></script>
+</body>
+</html>

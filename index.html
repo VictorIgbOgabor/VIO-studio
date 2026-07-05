@@ -1,0 +1,2160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Clarity Bible</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0F4C81">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <link rel="apple-touch-icon" href="icon-192.png">
+
+    <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;1,500&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.8.1/firebase-messaging-compat.js"></script>
+
+    <style>
+        :root {
+            --primary: #1a56a4;
+            --primary-glow: rgba(26, 86, 164, 0.18);
+            --accent: #f97316;
+            --accent-glow: rgba(249, 115, 22, 0.15);
+            --bg: #f0f4f9;
+            --bg2: #e6edf6;
+            --surface: #ffffff;
+            --surface2: #f8fafc;
+            --text-main: #0f1e35;
+            --text-muted: #5a7090;
+            --border: #d4e0ee;
+            --input-bg: #eef3f9;
+            --today-bg: rgba(26, 86, 164, 0.06);
+            --skeleton-base: #dde6f0;
+            --skeleton-shine: #eef3f9;
+            --shadow-sm: 0 2px 8px rgba(26,86,164,0.07);
+            --shadow-md: 0 4px 20px rgba(26,86,164,0.12);
+            --shadow-lg: 0 8px 40px rgba(26,86,164,0.16);
+            --radius-sm: 12px;
+            --radius-md: 20px;
+            --radius-lg: 28px;
+        }
+
+        body.dark-mode {
+            --primary: #4d8fd6;
+            --primary-glow: rgba(77, 143, 214, 0.2);
+            --accent: #f97316;
+            --accent-glow: rgba(249, 115, 22, 0.15);
+            --bg: #080f1a;
+            --bg2: #0d1726;
+            --surface: #111c2d;
+            --surface2: #0d1726;
+            --text-main: #e8f0fb;
+            --text-muted: #6e8dac;
+            --border: #1e3050;
+            --input-bg: #0d1726;
+            --today-bg: rgba(77, 143, 214, 0.1);
+            --skeleton-base: #1a2d47;
+            --skeleton-shine: #1e3353;
+            --shadow-sm: 0 2px 8px rgba(0,0,0,0.3);
+            --shadow-md: 0 4px 20px rgba(0,0,0,0.4);
+            --shadow-lg: 0 8px 40px rgba(0,0,0,0.5);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        body {
+            font-family: 'DM Sans', system-ui, sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            height: 100dvh;
+            overscroll-behavior-y: none;
+            -webkit-tap-highlight-color: transparent;
+            transition: background 0.4s, color 0.4s;
+        }
+
+        .app-container {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            max-width: 480px;
+            margin: 0 auto;
+            height: 100%;
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        /* ── HEADER ── */
+        header {
+            background: var(--surface);
+            padding: 14px 20px;
+            z-index: 10;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 10px var(--primary-glow);
+        }
+
+        header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.15rem;
+            color: var(--primary);
+            font-weight: 700;
+            letter-spacing: -0.02em;
+        }
+
+        header h1 span { color: var(--accent); }
+
+        .header-actions { display: flex; gap: 8px; align-items: center; }
+
+        .header-icon {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .header-icon:active { transform: scale(0.9); }
+        .header-icon:hover { color: var(--primary); border-color: var(--primary); background: var(--primary-glow); }
+
+        /* ── MAIN ── */
+        main {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px 18px 110px 18px;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .view-section { display: none; }
+        .view-section.active {
+            display: block;
+            animation: smoothEnter 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        @keyframes smoothEnter {
+            from { opacity: 0; transform: translateY(18px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-title {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        /* ── HERO CARD ── */
+        .hero-card {
+            position: relative;
+            background-color: #111;
+            background-size: cover;
+            background-position: center;
+            border-radius: var(--radius-lg);
+            overflow: hidden;
+            min-height: 340px;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-lg);
+        }
+
+        .hero-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(5,15,30,0.97) 0%, rgba(5,15,30,0.5) 55%, rgba(5,15,30,0.1) 100%);
+            z-index: 1;
+        }
+
+        .hero-actions {
+            position: absolute;
+            top: 14px;
+            right: 14px;
+            z-index: 3;
+            display: flex;
+            gap: 10px;
+        }
+
+        .action-circle {
+            background: rgba(255,255,255,0.13);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            border: 1px solid rgba(255,255,255,0.22);
+            color: white;
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .action-circle:hover { background: rgba(255,255,255,0.22); transform: scale(1.05); }
+        .action-circle:active { transform: scale(0.88); }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            padding: 28px 22px;
+        }
+
+        .reference-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background: var(--accent);
+            color: white;
+            padding: 5px 14px;
+            border-radius: 30px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+            margin-bottom: 14px;
+        }
+
+        .hero-content .scripture-text {
+            color: #ffffff;
+            font-size: 1.2rem;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            line-height: 1.65;
+        }
+
+        /* Photographer credit — bottom-left of hero card */
+        .photo-credit {
+            position: absolute;
+            bottom: 12px;
+            left: 14px;
+            z-index: 4;
+            background: rgba(0, 0, 0, 0.42);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            color: rgba(255, 255, 255, 0.72);
+            font-size: 0.65rem;
+            font-family: 'DM Sans', sans-serif;
+            font-weight: 500;
+            padding: 4px 10px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            text-decoration: none;
+            transition: color 0.2s, background 0.2s;
+            letter-spacing: 0.02em;
+            border: 1px solid rgba(255,255,255,0.14);
+            pointer-events: auto;
+        }
+        .photo-credit:hover { color: white; background: rgba(0,0,0,0.65); }
+        .photo-credit i { font-size: 0.8rem; }
+
+        /* ── SKELETON ── */
+        .skeleton {
+            background: linear-gradient(90deg, var(--skeleton-base) 25%, var(--skeleton-shine) 50%, var(--skeleton-base) 75%);
+            background-size: 200% 100%;
+            animation: shimmer 1.5s infinite;
+            border-radius: 8px;
+        }
+
+        @keyframes shimmer {
+            0% { background-position: 200% 0; }
+            100% { background-position: -200% 0; }
+        }
+
+        /* ── JOURNAL BOX ── */
+        .journal-box {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            border: 1px solid var(--border);
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .journal-box textarea {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            margin-bottom: 10px;
+            transition: border-color 0.2s;
+        }
+
+        .journal-box textarea:focus { border-color: var(--primary); }
+
+        /* ── CARD ── */
+        .card {
+            background: var(--surface);
+            border-radius: var(--radius-lg);
+            padding: 22px;
+            margin-bottom: 16px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-sm);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .card-actions { display: flex; gap: 8px; }
+
+        .icon-btn {
+            background: var(--input-bg);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            width: 38px;
+            height: 38px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 1.15rem;
+            color: var(--primary);
+            cursor: pointer;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .icon-btn:hover { background: var(--primary-glow); border-color: var(--primary); }
+        .icon-btn:active { transform: scale(0.88); }
+        .icon-btn.danger { color: #ef4444; }
+        .icon-btn.danger:hover { background: #fff0f0; border-color: #ef4444; }
+
+        .scripture-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            line-height: 1.7;
+            color: var(--text-main);
+        }
+
+        .verse-num {
+            color: var(--accent);
+            font-weight: bold;
+            font-size: 0.7em;
+            vertical-align: super;
+            margin-right: 3px;
+            font-family: 'DM Sans', sans-serif;
+        }
+
+        .highlighted-verse {
+            background: linear-gradient(to right, var(--accent-glow), transparent);
+            border-left: 3px solid var(--accent);
+            padding: 2px 8px;
+            display: inline;
+            border-radius: 0 6px 6px 0;
+        }
+
+        /* ── INPUTS ── */
+        .input-group { display: flex; gap: 10px; margin-bottom: 12px; }
+
+        select, input[type="text"], input[type="email"], input[type="password"], input[type="search"] {
+            flex: 1;
+            padding: 14px 16px;
+            border: 1.5px solid var(--border);
+            border-radius: var(--radius-sm);
+            background: var(--input-bg);
+            color: var(--text-main);
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+
+        select:focus, input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px var(--primary-glow);
+        }
+
+        .search-bar-wrap {
+            position: relative;
+            margin-bottom: 14px;
+        }
+
+        .search-bar-wrap i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.2rem;
+            pointer-events: none;
+        }
+
+        .search-bar-wrap input {
+            padding-left: 42px;
+            width: 100%;
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: var(--radius-sm);
+            font-weight: 600;
+            font-size: 0.95rem;
+            font-family: 'DM Sans', sans-serif;
+            width: 100%;
+            cursor: pointer;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.2s;
+            box-shadow: 0 4px 14px var(--primary-glow);
+        }
+
+        .btn:hover { filter: brightness(1.08); transform: translateY(-1px); }
+        .btn:active { transform: scale(0.97); }
+        .btn-accent { background: var(--accent); box-shadow: 0 4px 14px var(--accent-glow); }
+        .btn-small { padding: 9px 16px; font-size: 0.85rem; border-radius: 10px; width: auto; }
+        .btn-outline {
+            background: transparent;
+            color: var(--primary);
+            border: 1.5px solid var(--primary);
+            box-shadow: none;
+        }
+
+        /* ── TABS ── */
+        .tab-row {
+            display: flex;
+            gap: 6px;
+            margin-bottom: 16px;
+            background: var(--input-bg);
+            border-radius: var(--radius-sm);
+            padding: 5px;
+        }
+
+        .tab-btn {
+            flex: 1;
+            padding: 9px;
+            border: none;
+            background: transparent;
+            color: var(--text-muted);
+            border-radius: 9px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .tab-btn.active {
+            background: var(--surface);
+            color: var(--primary);
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ── PROFILE ── */
+        .profile-badge {
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            border-radius: var(--radius-md);
+            padding: 20px;
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            color: white;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .profile-badge::before {
+            content: '';
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.08);
+        }
+
+        .profile-avatar {
+            width: 52px;
+            height: 52px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            flex-shrink: 0;
+        }
+
+        .profile-info h4 { font-size: 1rem; font-weight: 600; color: white; }
+        .profile-info p { font-size: 0.8rem; color: rgba(255,255,255,0.7); margin-top: 2px; }
+
+        .streak-pill {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            background: rgba(255,255,255,0.2);
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.72rem;
+            font-weight: 700;
+            margin-top: 6px;
+            backdrop-filter: blur(8px);
+        }
+
+        /* ── PLAN LIST ── */
+        .list-item {
+            display: flex;
+            align-items: center;
+            padding: 16px 18px;
+            border-bottom: 1px solid var(--border);
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .list-item:last-child { border-bottom: none; }
+        .list-item:hover { background: var(--today-bg); }
+
+        .list-item.today {
+            background: var(--today-bg);
+            border-left: 3px solid var(--primary);
+        }
+
+        .list-icon {
+            font-size: 1.5rem;
+            color: var(--primary);
+            margin-right: 14px;
+            flex-shrink: 0;
+        }
+
+        .list-topic { font-weight: 600; font-size: 0.95rem; color: var(--text-main); display: block; }
+        .list-ref { font-size: 0.8rem; color: var(--text-muted); margin-top: 2px; }
+
+        .today-tag {
+            margin-left: auto;
+            background: var(--primary);
+            color: white;
+            font-size: 0.65rem;
+            font-weight: 700;
+            padding: 3px 8px;
+            border-radius: 20px;
+            text-transform: uppercase;
+        }
+
+        /* ── VAULT ── */
+        .vault-item {
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
+            transition: background 0.3s;
+        }
+
+        .vault-item:last-child { border-bottom: none; }
+
+        .vault-text {
+            font-family: 'Playfair Display', serif;
+            font-size: 1rem;
+            line-height: 1.65;
+            border-left: 3px solid var(--primary);
+            padding-left: 14px;
+            margin-top: 12px;
+            color: var(--text-main);
+        }
+
+        .vault-meta {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+        }
+
+        .color-picker { display: flex; gap: 8px; margin-top: 14px; align-items: center; }
+        .color-label { font-size: 0.72rem; color: var(--text-muted); font-weight: 600; margin-right: 4px; }
+
+        .color-dot {
+            width: 22px;
+            height: 22px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 2px solid transparent;
+            transition: all 0.2s;
+            flex-shrink: 0;
+        }
+
+        .color-dot:hover { transform: scale(1.2); }
+        .color-dot:active { transform: scale(0.9); }
+        .color-dot.selected { transform: scale(1.15); border-color: var(--text-main) !important; }
+
+        .vault-note {
+            width: 100%;
+            background: var(--input-bg);
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            padding: 10px 12px;
+            color: var(--text-main);
+            font-size: 0.88rem;
+            resize: vertical;
+            min-height: 72px;
+            outline: none;
+            margin-top: 10px;
+            font-family: 'DM Sans', sans-serif;
+            transition: border-color 0.2s;
+        }
+
+        .vault-note:focus { border-color: var(--primary); }
+
+        /* ── VAULT SEARCH ── */
+        .vault-filter-bar {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 14px;
+            border: 1px solid var(--border);
+            margin-bottom: 14px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* ── JOURNAL ── */
+        .journal-entry {
+            background: var(--surface);
+            border-radius: var(--radius-md);
+            padding: 18px 20px;
+            border: 1px solid var(--border);
+            margin-bottom: 12px;
+            box-shadow: var(--shadow-sm);
+            animation: smoothEnter 0.35s ease forwards;
+        }
+
+        .journal-entry-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .journal-date {
+            font-size: 0.72rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.06em;
+        }
+
+        .journal-entry p {
+            color: var(--text-main);
+            line-height: 1.65;
+            font-size: 0.95rem;
+        }
+
+        .journal-header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 14px;
+        }
+
+        .count-badge {
+            background: var(--primary-glow);
+            color: var(--primary);
+            border: 1px solid var(--border);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 700;
+        }
+
+        /* ── BOTTOM NAV ── */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            width: 100%;
+            background: var(--surface);
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0 calc(10px + env(safe-area-inset-bottom)) 0;
+            border-top: 1px solid var(--border);
+            border-radius: 22px 22px 0 0;
+            z-index: 20;
+            box-shadow: 0 -4px 24px rgba(0,0,0,0.08);
+        }
+
+        .nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            color: var(--text-muted);
+            background: none;
+            border: none;
+            font-size: 0.65rem;
+            font-weight: 600;
+            font-family: 'DM Sans', sans-serif;
+            cursor: pointer;
+            flex: 1;
+            padding: 4px 0;
+            transition: color 0.2s;
+            text-transform: uppercase;
+            letter-spacing: 0.04em;
+        }
+
+        .nav-item.active { color: var(--primary); }
+        .nav-item i { font-size: 1.4rem; transition: transform 0.3s; }
+        .nav-item.active i { transform: translateY(-2px); color: var(--accent); }
+
+        /* ── AUTH SCREEN ── */
+        #auth-screen {
+            position: fixed;
+            inset: 0;
+            background: var(--bg);
+            z-index: 100;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 24px;
+            overflow-y: auto;
+        }
+
+        .auth-card {
+            background: var(--surface);
+            padding: 36px 28px;
+            border-radius: var(--radius-lg);
+            width: 100%;
+            max-width: 420px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 28px;
+        }
+
+        .auth-logo-icon {
+            width: 60px;
+            height: 60px;
+            background: linear-gradient(135deg, var(--primary), #3b82f6);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 14px;
+            font-size: 2rem;
+            color: white;
+            box-shadow: 0 6px 20px var(--primary-glow);
+        }
+
+        .auth-logo h1 {
+            font-family: 'Playfair Display', serif;
+            color: var(--primary);
+            font-size: 1.6rem;
+            letter-spacing: -0.02em;
+        }
+
+        .auth-logo h1 span { color: var(--accent); }
+        .auth-logo p { color: var(--text-muted); font-size: 0.88rem; margin-top: 4px; }
+
+        .form-field {
+            position: relative;
+            margin-bottom: 12px;
+        }
+
+        .form-field i {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 1.15rem;
+            pointer-events: none;
+        }
+
+        .form-field input, .form-field select {
+            padding-left: 42px;
+            width: 100%;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        .auth-switch span {
+            color: var(--accent);
+            font-weight: 700;
+            cursor: pointer;
+        }
+
+        .forgot-link {
+            color: var(--primary);
+            font-size: 0.82rem;
+            text-align: right;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 4px;
+            display: block;
+        }
+
+        .forgot-link:hover { text-decoration: underline; }
+
+        /* ── TOAST ── */
+        #toast-container {
+            position: fixed;
+            top: 16px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            width: 92%;
+            max-width: 380px;
+            pointer-events: none;
+        }
+
+        .toast {
+            background: var(--surface);
+            color: var(--text-main);
+            padding: 14px 18px;
+            border-radius: var(--radius-sm);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.88rem;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--border);
+            animation: toastIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .toast.out { animation: toastOut 0.3s ease forwards; }
+        .toast i { font-size: 1.3rem; flex-shrink: 0; }
+        .toast.success { border-left: 3px solid #22c55e; }
+        .toast.success i { color: #22c55e; }
+        .toast.error { border-left: 3px solid #ef4444; }
+        .toast.error i { color: #ef4444; }
+        .toast.info { border-left: 3px solid var(--primary); }
+        .toast.info i { color: var(--primary); }
+
+        @keyframes toastIn {
+            from { opacity: 0; transform: translateY(-12px) scale(0.96); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        @keyframes toastOut {
+            from { opacity: 1; transform: translateY(0); }
+            to { opacity: 0; transform: translateY(-8px); }
+        }
+
+        /* ── KEYWORD SEARCH ── */
+        .keyword-results { margin-top: 16px; }
+
+        .keyword-result-item {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-md);
+            padding: 16px;
+            margin-bottom: 10px;
+            animation: smoothEnter 0.3s ease forwards;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .keyword-result-ref {
+            font-size: 0.75rem;
+            color: var(--accent);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 6px;
+        }
+
+        /* ── EMPTY STATE ── */
+        .empty-state {
+            text-align: center;
+            padding: 40px 24px;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            display: block;
+            margin-bottom: 12px;
+            opacity: 0.4;
+        }
+
+        .empty-state p { font-size: 0.9rem; line-height: 1.6; }
+
+        /* ── LOADING SPINNER ── */
+        .spinner {
+            display: inline-block;
+            width: 18px;
+            height: 18px;
+            border: 2px solid rgba(255,255,255,0.4);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+        }
+
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* ── MISC ── */
+        canvas { display: none; }
+
+        .divider {
+            height: 1px;
+            background: var(--border);
+            margin: 16px 0;
+        }
+
+        .tip-banner {
+            background: var(--today-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius-sm);
+            padding: 12px 14px;
+            font-size: 0.82rem;
+            color: var(--text-muted);
+            display: flex;
+            gap: 10px;
+            align-items: flex-start;
+            margin-bottom: 14px;
+        }
+
+        .tip-banner i { color: var(--primary); font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
+
+        .char-count {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+            text-align: right;
+            margin-top: -8px;
+            margin-bottom: 10px;
+        }
+
+        .char-count.warn { color: var(--accent); }
+    </style>
+</head>
+<body>
+
+    <div id="toast-container"></div>
+    <canvas id="shareCanvas" width="1080" height="1920"></canvas>
+
+    <!-- AUTH SCREEN -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon"><i class='bx bx-book-open'></i></div>
+                <h1>Clarity <span>Bible</span></h1>
+                <p id="auth-subtitle">Personalized study for every season.</p>
+            </div>
+            
+            <form id="signup-form" style="display: flex; flex-direction: column;" onsubmit="handleAuth(event, 'signup')">
+                <div class="form-field">
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" id="su-email" placeholder="Email Address" required>
+                </div>
+                <div class="form-field">
+                    <i class='bx bx-lock-alt'></i>
+                    <input type="password" id="su-pass" placeholder="Password (min. 6 characters)" required minlength="6">
+                </div>
+                <div class="form-field">
+                    <i class='bx bx-compass'></i>
+                    <select id="su-focus" required>
+                        <option value="" disabled selected>What are you seeking right now?</option>
+                        <option value="direction">Direction</option>
+                        <option value="peace">Peace</option>
+                        <option value="strength">Strength</option>
+                        <option value="purpose">Purpose</option>
+                        <option value="healing">Healing</option>
+                        <option value="wisdom">Wisdom</option>
+                    </select>
+                </div>
+                <div class="form-field" style="margin-bottom:16px;">
+                    <i class='bx bx-user'></i>
+                    <select id="su-gender" required>
+                        <option value="" disabled selected>Gender</option>
+                        <option value="male">Male</option>
+                        <option value="female">Female</option>
+                        <option value="other">Prefer not to say</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-accent" id="signup-btn"><i class='bx bx-check-shield'></i> Create Account</button>
+                <p class="auth-switch">Already have an account? <span onclick="toggleAuthView('login')">Sign In</span></p>
+            </form>
+
+            <form id="login-form" style="display: none; flex-direction: column;" onsubmit="handleAuth(event, 'login')">
+                <div class="form-field">
+                    <i class='bx bx-envelope'></i>
+                    <input type="email" id="li-email" placeholder="Email Address" required>
+                </div>
+                <div class="form-field">
+                    <i class='bx bx-lock-alt'></i>
+                    <input type="password" id="li-pass" placeholder="Password" required>
+                </div>
+                <span class="forgot-link" onclick="resetPassword()" style="margin-bottom:14px;">Forgot Password?</span>
+                <button type="submit" class="btn btn-accent" id="login-btn"><i class='bx bx-log-in'></i> Sign In</button>
+                <p class="auth-switch">New here? <span onclick="toggleAuthView('signup')">Create Account</span></p>
+            </form>
+        </div>
+    </div>
+
+    <!-- MAIN APP -->
+    <div id="app-screen" class="app-container" style="display: none;">
+        <header>
+            <div class="logo">
+                <div class="logo-icon"><i class='bx bx-book-open'></i></div>
+                <h1>Clarity <span>Bible</span></h1>
+            </div>
+            <div class="header-actions">
+                <button class="header-icon" onclick="requestNotifications()" title="Enable Alerts"><i class='bx bx-bell'></i></button>
+                <button class="header-icon" onclick="toggleTheme()" title="Toggle Theme"><i class='bx bx-moon' id="themeIcon"></i></button>
+                <button class="header-icon" onclick="logout()" title="Sign Out"><i class='bx bx-log-out'></i></button>
+            </div>
+        </header>
+
+        <main id="main-scroll-area">
+
+            <!-- DAILY VIEW -->
+            <section id="view-daily" class="view-section active">
+                <p class="section-title"><i class='bx bx-calendar-star'></i> Verse of the Day</p>
+                <div class="hero-card" id="dailyHeroCard">
+                    <div class="hero-actions" id="dailyActions" style="display: none;">
+                        <button class="action-circle" onclick="toggleAudio(currentVerseText, this)" title="Listen"><i class='bx bx-play'></i></button>
+                        <button class="action-circle" onclick="generateViralImage(currentVerseText, currentVerseRef)" title="Generate Image"><i class='bx bx-image-alt'></i></button>
+                        <button class="action-circle" onclick="shareVerse(currentVerseText, currentVerseRef)" title="Share"><i class='bx bx-share-alt'></i></button>
+                        <button class="action-circle" onclick="saveToVault(currentVerseRef, currentVerseText)" title="Save"><i class='bx bx-bookmark-plus'></i></button>
+                    </div>
+                    <div class="hero-overlay"></div>
+                    <div class="hero-content" id="dailyContent">
+                        <div class="skeleton" style="width: 130px; height: 24px; border-radius: 20px; margin-bottom: 14px;"></div>
+                        <div class="skeleton" style="width: 100%; height: 22px; margin-bottom: 8px;"></div>
+                        <div class="skeleton" style="width: 80%; height: 22px;"></div>
+                    </div>
+                </div>
+                
+                <div class="journal-box">
+                    <p class="section-title" style="font-size:0.75rem; margin-bottom:10px;"><i class='bx bx-edit-alt'></i> Today's Reflection</p>
+                    <textarea id="daily-reflection" placeholder="Write a short prayer, thought, or goal for today..." maxlength="1000" oninput="updateCharCount(this)"></textarea>
+                    <div class="char-count" id="reflection-count">0 / 1000</div>
+                    <button class="btn btn-accent btn-small" onclick="saveReflection()"><i class='bx bx-save'></i> Save to Journal</button>
+                </div>
+            </section>
+
+            <!-- SEARCH VIEW -->
+            <section id="view-search" class="view-section">
+                <p class="section-title"><i class='bx bx-search-alt-2'></i> Explore Scripture</p>
+
+                <div class="tab-row" style="margin-bottom:16px;">
+                    <button class="tab-btn active" id="tab-browse" onclick="switchSearchTab('browse')"><i class='bx bx-book'></i> Browse</button>
+                    <button class="tab-btn" id="tab-keyword" onclick="switchSearchTab('keyword')"><i class='bx bx-search'></i> Keyword</button>
+                </div>
+
+                <!-- Browse Tab -->
+                <div id="search-browse">
+                    <div class="tip-banner">
+                        <i class='bx bx-info-circle'></i>
+                        <span>Select a book, chapter, and optionally a verse. Leave verse empty to read the whole chapter.</span>
+                    </div>
+                    <div class="input-group">
+                        <select id="bookSelect" style="flex: 2;"></select>
+                        <select id="chapterSelect"><option value="">Ch</option></select>
+                        <select id="verseSelect"><option value="">Vs</option></select>
+                    </div>
+                    <div class="input-group" style="margin-bottom:14px;">
+                        <select id="translationSelect">
+                            <option value="web">WEB — Modern English</option>
+                            <option value="kjv">KJV — Classic Edition</option>
+                            <option value="bbe">BBE — Basic English</option>
+                        </select>
+                    </div>
+                    <button class="btn btn-accent" onclick="fetchSearchVerse()" id="readBtn" style="margin-bottom: 20px;"><i class='bx bx-book-open'></i> Read Chapter</button>
+                    <div id="searchOutput" style="display: none;" class="card"></div>
+                </div>
+
+                <!-- Keyword Tab -->
+                <div id="search-keyword" style="display:none;">
+                    <div class="search-bar-wrap">
+                        <i class='bx bx-search'></i>
+                        <input type="search" id="keywordInput" placeholder="Search a word or phrase… e.g. 'love', 'peace'" onkeydown="if(event.key==='Enter') searchKeyword()">
+                    </div>
+                    <div class="input-group" style="margin-bottom:14px;">
+                        <select id="kwTranslation">
+                            <option value="web">WEB</option>
+                            <option value="kjv">KJV</option>
+                            <option value="bbe">BBE</option>
+                        </select>
+                        <button class="btn btn-accent" onclick="searchKeyword()" style="flex:2; margin-bottom:0;"><i class='bx bx-search-alt'></i> Search</button>
+                    </div>
+                    <div id="keywordResults" class="keyword-results"></div>
+                </div>
+            </section>
+
+            <!-- PLAN VIEW -->
+            <section id="view-plan" class="view-section">
+                <p class="section-title"><i class='bx bx-map-alt'></i> Your Study Plan</p>
+                <div class="profile-badge">
+                    <div class="profile-avatar"><i class='bx bx-user'></i></div>
+                    <div class="profile-info">
+                        <h4 id="profile-email">User</h4>
+                        <p id="profile-tag">Cloud Sync Active</p>
+                        <div class="streak-pill" id="streak-display">🔥 0 Day Streak</div>
+                    </div>
+                </div>
+                <div class="card" style="padding: 0; overflow: hidden;" id="planList"></div>
+            </section>
+
+            <!-- VAULT VIEW -->
+            <section id="view-vault" class="view-section">
+                <p class="section-title"><i class='bx bx-cloud-upload'></i> Saved Verses</p>
+                <div class="vault-filter-bar">
+                    <div class="search-bar-wrap" style="margin-bottom:0;">
+                        <i class='bx bx-search'></i>
+                        <input type="search" id="vaultSearch" placeholder="Filter saved verses…" oninput="renderVault()" style="width:100%;">
+                    </div>
+                </div>
+                <div class="card" style="padding: 0; overflow: hidden;" id="vaultList">
+                    <div class="empty-state"><i class='bx bx-loader-circle bx-spin'></i><p>Syncing your vault…</p></div>
+                </div>
+            </section>
+
+            <!-- JOURNAL VIEW -->
+            <section id="view-journal" class="view-section">
+                <div class="journal-header-row">
+                    <p class="section-title" style="margin-bottom:0;"><i class='bx bx-book-heart'></i> My Journal</p>
+                    <span class="count-badge" id="journal-count">0 entries</span>
+                </div>
+                <div id="journalList">
+                    <div class="empty-state"><i class='bx bx-loader-circle bx-spin'></i><p>Syncing journal…</p></div>
+                </div>
+            </section>
+        </main>
+
+        <nav class="bottom-nav">
+            <button class="nav-item active" id="nav-daily" onclick="switchView('daily', this)"><i class='bx bx-sun'></i><span>Daily</span></button>
+            <button class="nav-item" id="nav-search" onclick="switchView('search', this)"><i class='bx bx-compass'></i><span>Search</span></button>
+            <button class="nav-item" id="nav-plan" onclick="switchView('plan', this)"><i class='bx bx-target-lock'></i><span>Plan</span></button>
+            <button class="nav-item" id="nav-vault" onclick="switchView('vault', this)"><i class='bx bx-bookmark'></i><span>Vault</span></button>
+            <button class="nav-item" id="nav-journal" onclick="switchView('journal', this)"><i class='bx bx-book-heart'></i><span>Journal</span></button>
+        </nav>
+    </div>
+
+    <script>
+        const firebaseConfig = {
+            apiKey: "AIzaSyBUCmTRyjdp1nImPWwBhqs_cwzSVqnRovw",
+            authDomain: "clarity-bible-app.firebaseapp.com",
+            projectId: "clarity-bible-app",
+            storageBucket: "clarity-bible-app.firebasestorage.app",
+            messagingSenderId: "537256650082",
+            appId: "1:537256650082:web:e8357731126fa167c5783b"
+        };
+
+        firebase.initializeApp(firebaseConfig);
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let messaging = null;
+        try { messaging = firebase.messaging(); } catch(e) {}
+
+        let currentVerseText = "", currentVerseRef = "";
+        let targetBookmarkRef = "", targetBookmarkText = "";
+        let currentUserProfile = null, currentUid = null;
+        let isSpeaking = false;
+
+        // ── TOAST SYSTEM ──────────────────────────────────────────────
+        function showToast(message, type = "success") {
+            const icons = { success: 'bx-check-circle', error: 'bx-error-circle', info: 'bx-info-circle' };
+            const container = document.getElementById('toast-container');
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `<i class='bx ${icons[type] || icons.success}'></i><span>${message}</span>`;
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.classList.add('out');
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ── CHAR COUNT ────────────────────────────────────────────────
+        function updateCharCount(el) {
+            const count = document.getElementById('reflection-count');
+            const len = el.value.length;
+            count.textContent = `${len} / 1000`;
+            count.className = 'char-count' + (len > 850 ? ' warn' : '');
+        }
+
+        // ── THEME ─────────────────────────────────────────────────────
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const isDark = document.body.classList.contains('dark-mode');
+            localStorage.setItem('theme', isDark ? 'dark' : 'light');
+            document.getElementById('themeIcon').className = isDark ? 'bx bx-sun' : 'bx bx-moon';
+        }
+        function initTheme() {
+            if (localStorage.getItem('theme') === 'dark') {
+                document.body.classList.add('dark-mode');
+                document.getElementById('themeIcon').className = 'bx bx-sun';
+            }
+        }
+
+        // ── VIEW SWITCHING ────────────────────────────────────────────
+        function switchView(id, btn) {
+            if (isSpeaking) { window.speechSynthesis.cancel(); isSpeaking = false; }
+            document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            document.querySelectorAll('.view-section').forEach(v => v.classList.remove('active'));
+            document.getElementById(`view-${id}`).classList.add('active');
+            document.getElementById('main-scroll-area').scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        // ── SEARCH TABS ───────────────────────────────────────────────
+        function switchSearchTab(tab) {
+            document.getElementById('search-browse').style.display = tab === 'browse' ? 'block' : 'none';
+            document.getElementById('search-keyword').style.display = tab === 'keyword' ? 'block' : 'none';
+            document.getElementById('tab-browse').classList.toggle('active', tab === 'browse');
+            document.getElementById('tab-keyword').classList.toggle('active', tab === 'keyword');
+        }
+
+        // ── AUTH ──────────────────────────────────────────────────────
+        function toggleAuthView(view) {
+            document.getElementById('signup-form').style.display = view === 'signup' ? 'flex' : 'none';
+            document.getElementById('login-form').style.display = view === 'login' ? 'flex' : 'none';
+        }
+
+        async function resetPassword() {
+            const emailInput = document.getElementById('li-email').value;
+            if (!emailInput) { showToast("Enter your email address first.", "error"); return; }
+            try {
+                await auth.sendPasswordResetEmail(emailInput);
+                showToast("Reset link sent to your email!", "success");
+            } catch (e) { showToast(e.message, "error"); }
+        }
+
+        async function handleAuth(event, type) {
+            event.preventDefault();
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalHTML = btn.innerHTML;
+            btn.innerHTML = '<div class="spinner"></div>';
+            btn.disabled = true;
+
+            try {
+                if (type === 'signup') {
+                    const email = document.getElementById('su-email').value;
+                    const pass = document.getElementById('su-pass').value;
+                    const focus = document.getElementById('su-focus').value;
+                    const gender = document.getElementById('su-gender').value;
+                    const userCred = await auth.createUserWithEmailAndPassword(email, pass);
+                    await db.collection('users').doc(userCred.user.uid).set({
+                        email, focus, gender,
+                        vault: [], journal: [],
+                        streak: 1,
+                        lastActive: new Date().toDateString(),
+                        createdAt: new Date().toISOString()
+                    });
+                } else {
+                    await auth.signInWithEmailAndPassword(
+                        document.getElementById('li-email').value,
+                        document.getElementById('li-pass').value
+                    );
+                }
+            } catch (e) {
+                showToast(e.message.replace('Firebase: ', ''), "error");
+                btn.innerHTML = originalHTML;
+                btn.disabled = false;
+            }
+        }
+
+        function logout() {
+            auth.signOut().then(() => { document.location.reload(); });
+        }
+
+        // ── AUTH STATE ────────────────────────────────────────────────
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUid = user.uid;
+                const docRef = await db.collection('users').doc(currentUid).get();
+                if (docRef.exists) {
+                    currentUserProfile = docRef.data();
+                    // Streak logic
+                    const todayStr = new Date().toDateString();
+                    let lastAct = currentUserProfile.lastActive || "";
+                    let currentStreak = currentUserProfile.streak || 0;
+                    if (lastAct !== todayStr) {
+                        const yesterday = new Date();
+                        yesterday.setDate(yesterday.getDate() - 1);
+                        currentStreak = (lastAct === yesterday.toDateString()) ? currentStreak + 1 : 1;
+                        currentUserProfile.lastActive = todayStr;
+                        currentUserProfile.streak = currentStreak;
+                        db.collection('users').doc(currentUid).update({ lastActive: todayStr, streak: currentStreak });
+                    }
+                    document.getElementById('streak-display').innerText = `🔥 ${currentStreak} Day Streak`;
+                    initializeAppUI();
+                }
+            } else {
+                document.getElementById('app-screen').style.display = 'none';
+                document.getElementById('auth-screen').style.display = 'flex';
+            }
+        });
+
+        // ── INIT APP ──────────────────────────────────────────────────
+        function initializeAppUI() {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('app-screen').style.display = 'flex';
+            document.getElementById('profile-email').innerText = currentUserProfile.email.split('@')[0];
+            document.getElementById('profile-tag').innerText = `Focus: ${capitalize(currentUserProfile.focus || 'General')} · Cloud Sync`;
+            initTheme();
+            populateDropdowns();
+            renderPlan();
+            renderVault();
+            renderJournal();
+            loadDailyVerse();
+        }
+
+        function capitalize(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
+
+        // ── PLAN ──────────────────────────────────────────────────────
+        function renderPlan() {
+            const customPlan = [
+                { day: 0, title: "Rest & Reflection",       ref: "Psalms 46:10",     icon: "bx-coffee" },
+                { day: 1, title: "Vision & Strategy",       ref: "Proverbs 29:18",   icon: "bx-bulb" },
+                { day: 2, title: "Diligence & Focus",       ref: "Colossians 3:23",  icon: "bx-briefcase" },
+                { day: 3, title: "Wisdom & Clarity",        ref: "James 1:5",        icon: "bx-glasses" },
+                { day: 4, title: "Strength & Endurance",    ref: "Isaiah 40:31",     icon: "bx-run" },
+                { day: 5, title: "Creativity & Design",     ref: "Ephesians 2:10",   icon: "bx-palette" },
+                { day: 6, title: "Preparation & Purpose",   ref: "Proverbs 16:9",    icon: "bx-map" }
+            ];
+            const curDay = new Date().getDay();
+            const pList = document.getElementById('planList');
+            let html = '';
+            customPlan.forEach(p => {
+                const isToday = p.day === curDay;
+                html += `<div class="list-item ${isToday ? 'today' : ''}" onclick="loadPlanVerse('${p.ref}')">
+                    <i class='bx ${p.icon} list-icon'></i>
+                    <div style="flex:1;">
+                        <span class="list-topic">${p.title}</span>
+                        <span class="list-ref">${p.ref}</span>
+                    </div>
+                    ${isToday ? '<span class="today-tag">Today</span>' : ''}
+                </div>`;
+            });
+            pList.innerHTML = html;
+        }
+
+        function loadPlanVerse(ref) {
+            // Parse ref like "Psalms 46:10" into book/chapter/verse
+            const match = ref.match(/^(.+?)\s+(\d+):(\d+)$/);
+            if (!match) return;
+            const [, book, chapter, verse] = match;
+            document.getElementById('bookSelect').value = book;
+            document.getElementById('chapterSelect').value = chapter;
+            document.getElementById('verseSelect').value = verse;
+            switchView('search', document.getElementById('nav-search'));
+            setTimeout(() => {
+                switchSearchTab('browse');
+                fetchSearchVerse();
+            }, 200);
+        }
+
+        // ── DAILY VERSE ───────────────────────────────────────────────
+        // ── FAITH-THEMED DAILY IMAGES ─────────────────────────────────
+        // 31 curated faith images — one per day of the month.
+        // Each entry: { url, credit, location } — all free on Unsplash.
+        const FAITH_IMAGES = [
+            { url: "https://images.unsplash.com/photo-1548625149-720f86be925e?w=900&q=85", credit: "James Coleman",      label: "Cathedral interior, light rays"       },
+            { url: "https://images.unsplash.com/photo-1520637836862-4d197d17c93a?w=900&q=85", credit: "Pisit Heng",         label: "Cross on hilltop at sunset"           },
+            { url: "https://images.unsplash.com/photo-1577731625564-a61e0c41b00d?w=900&q=85", credit: "Rosie Sun",          label: "Stained glass window colours"         },
+            { url: "https://images.unsplash.com/photo-1519455953755-af066f52f1a6?w=900&q=85", credit: "Grant Whitty",       label: "Church doors open to golden light"    },
+            { url: "https://images.unsplash.com/photo-1542272201-b1ca555f8505?w=900&q=85", credit: "Cassie Boca",        label: "White doves in flight"                },
+            { url: "https://images.unsplash.com/photo-1529070538774-1843cb3265df?w=900&q=85", credit: "Karl Fredrickson",   label: "Old stone church at dawn"             },
+            { url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=900&q=85", credit: "Ben White",          label: "Open Bible on wooden table"           },
+            { url: "https://images.unsplash.com/photo-1601118964938-16c8b3866e7f?w=900&q=85", credit: "Pisit Heng",         label: "Cross silhouette at dusk"             },
+            { url: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=900&q=85", credit: "Priscilla Du Preez", label: "Hands open in prayer"                 },
+            { url: "https://images.unsplash.com/photo-1504052434569-70ad5836ab65?w=900&q=85", credit: "Aaron Burden",       label: "Bible pages with morning light"       },
+            { url: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?w=900&q=85", credit: "Julien Lanoy",       label: "Gothic cathedral spires"              },
+            { url: "https://images.unsplash.com/photo-1506905925346-21bda4d32df4?w=900&q=85", credit: "Samuel Ferrara",     label: "Mountain cross at sunrise"            },
+            { url: "https://images.unsplash.com/photo-1533174072545-7a4b6ad7a6c3?w=900&q=85", credit: "David Monje",        label: "Candlelight in dark church"           },
+            { url: "https://images.unsplash.com/photo-1531545514256-b1400bc00f31?w=900&q=85", credit: "Debby Hudson",       label: "Stained glass rose window"            },
+            { url: "https://images.unsplash.com/photo-1586348943529-beaae6c28db9?w=900&q=85", credit: "Timothy Eberly",     label: "White dove against blue sky"          },
+            { url: "https://images.unsplash.com/photo-1477959858617-67f85cf4f1df?w=900&q=85", credit: "Levi Bare",          label: "Chapel at golden hour"                },
+            { url: "https://images.unsplash.com/photo-1605125950083-8e9f5f8a1cb3?w=900&q=85", credit: "Fa Barboza",         label: "Praying hands close-up"              },
+            { url: "https://images.unsplash.com/photo-1580541832626-2a7131ee809f?w=900&q=85", credit: "Sixteen Miles Out",  label: "Ancient stone chapel interior"        },
+            { url: "https://images.unsplash.com/photo-1499209974431-9dddcece7f88?w=900&q=85", credit: "Ioann Mark Kuznietsov", label: "Cross in morning mist"            },
+            { url: "https://images.unsplash.com/photo-1502082553048-f009c37129b9?w=900&q=85", credit: "Aaron Burden",       label: "Open Bible in sunlit field"           },
+            { url: "https://images.unsplash.com/photo-1445991842772-097fea258e7b?w=900&q=85", credit: "Iswanto Arif",       label: "Church bell tower at sunrise"         },
+            { url: "https://images.unsplash.com/photo-1564419320461-6870880221ad?w=900&q=85", credit: "Sandy Millar",       label: "Peaceful chapel interior pews"        },
+            { url: "https://images.unsplash.com/photo-1519817650390-64a93db51149?w=900&q=85", credit: "Sixteen Miles Out",  label: "Dove on branch in golden light"       },
+            { url: "https://images.unsplash.com/photo-1518241353330-0f7941c2d9b5?w=900&q=85", credit: "Josh Boot",          label: "Mountain cross at twilight"           },
+            { url: "https://images.unsplash.com/photo-1590077428593-a55bb07c4665?w=900&q=85", credit: "Nick Fewings",       label: "Stained glass cross detail"           },
+            { url: "https://images.unsplash.com/photo-1559526323-cb2f2fe2591b?w=900&q=85", credit: "Mateus Campos Felipe", label: "Open Bible with candle"              },
+            { url: "https://images.unsplash.com/photo-1438232992991-995b671e4b6b?w=900&q=85", credit: "James Coleman",      label: "Sunrise over church roof"             },
+            { url: "https://images.unsplash.com/photo-1508739773434-c26b3d09e071?w=900&q=85", credit: "Hugues de Buyer-Mimeure", label: "Light beams through cathedral" },
+            { url: "https://images.unsplash.com/photo-1496483648148-47c686dc86a8?w=900&q=85", credit: "Debby Hudson",       label: "Dove of peace in flight"              },
+            { url: "https://images.unsplash.com/photo-1561533936-5da52eb8c9fc?w=900&q=85", credit: "Amaury Gutierrez",    label: "White church facade at dawn"          },
+            { url: "https://images.unsplash.com/photo-1521747116042-5a810fda9664?w=900&q=85", credit: "Rhand McCoy",        label: "Cross on mountain at sunset"          }
+        ];
+
+        const curatedVerses = [
+            "Proverbs 3:5", "Philippians 4:13", "Jeremiah 29:11", "Romans 8:28", "Isaiah 41:10",
+            "Psalms 46:1",  "Galatians 5:22",   "Hebrews 11:1",   "2 Timothy 1:7","1 Corinthians 16:14",
+            "Proverbs 4:23","Joshua 1:9",        "James 1:5",      "Matthew 11:28","Romans 12:2",
+            "Philippians 4:6","Psalms 119:105",  "Colossians 3:23","Isaiah 40:31", "Psalms 23:1",
+            "Ephesians 2:8","Romans 15:13",      "John 14:27",     "Proverbs 16:3","Psalms 19:14",
+            "Lamentations 3:22","1 Peter 5:7",   "2 Corinthians 5:17","Psalms 34:18","Matthew 6:33","Micah 6:8"
+        ];
+
+        // Preload next image in the background so there's no flicker
+        function preloadImage(url) {
+            const img = new Image();
+            img.src = url;
+        }
+
+        async function loadDailyVerse() {
+            const dayOfMonth  = new Date().getDate();   // 1–31
+            const imgIndex    = (dayOfMonth - 1) % FAITH_IMAGES.length;
+            const todayImg    = FAITH_IMAGES[imgIndex];
+            const nextImg     = FAITH_IMAGES[(imgIndex + 1) % FAITH_IMAGES.length];
+            const verseRef    = curatedVerses[(dayOfMonth - 1) % curatedVerses.length];
+
+            const heroCard    = document.getElementById('dailyHeroCard');
+
+            // ── Apply background with a smooth crossfade ──
+            // Start transparent, set image, then fade in
+            heroCard.style.opacity = '0';
+            heroCard.style.transition = 'opacity 0.7s ease';
+            heroCard.style.backgroundImage = `url('${todayImg.url}')`;
+            heroCard.style.backgroundSize  = 'cover';
+            heroCard.style.backgroundPosition = 'center';
+
+            // Once image loads, fade the card in
+            const img = new Image();
+            img.onload = () => {
+                heroCard.style.opacity = '1';
+                preloadImage(nextImg.url); // silently preload tomorrow's image
+            };
+            img.onerror = () => {
+                // Fallback gradient if image fails to load
+                heroCard.style.backgroundImage = 'linear-gradient(135deg, #0b1633, #1a3a6e)';
+                heroCard.style.opacity = '1';
+            };
+            img.src = todayImg.url;
+
+            // ── Add photographer credit badge ──
+            // Remove any existing credit badge first
+            const existing = heroCard.querySelector('.photo-credit');
+            if (existing) existing.remove();
+
+            const creditEl = document.createElement('a');
+            creditEl.className = 'photo-credit';
+            creditEl.href = 'https://unsplash.com?utm_source=clarity_bible&utm_medium=referral';
+            creditEl.target = '_blank';
+            creditEl.rel = 'noopener noreferrer';
+            creditEl.innerHTML = `<i class='bx bx-camera'></i> ${todayImg.credit} · Unsplash`;
+            heroCard.appendChild(creditEl);
+
+            // ── Fetch verse ──
+            try {
+                const res  = await fetch(`https://bible-api.com/${encodeURIComponent(verseRef)}?translation=web`);
+                const data = await res.json();
+                currentVerseRef  = `${data.reference} (WEB)`;
+                currentVerseText = data.text.replace(/<[^>]*>?/gm, '').trim();
+
+                document.getElementById('dailyContent').innerHTML = `
+                    <span class="reference-badge"><i class='bx bx-bookmark'></i> ${currentVerseRef}</span>
+                    <div class="scripture-text">"${currentVerseText}"</div>`;
+                document.getElementById('dailyActions').style.display = 'flex';
+            } catch (e) {
+                document.getElementById('dailyContent').innerHTML =
+                    `<div style="color:rgba(255,255,255,0.65); font-size:0.9rem; line-height:1.6;">
+                        Could not load today's verse.<br>Check your connection and try again.
+                     </div>`;
+            }
+        }
+
+        // ── SEARCH ────────────────────────────────────────────────────
+        function populateDropdowns() {
+            const books = ["Genesis","Exodus","Leviticus","Numbers","Deuteronomy","Joshua","Judges","Ruth","1 Samuel","2 Samuel","1 Kings","2 Kings","1 Chronicles","2 Chronicles","Ezra","Nehemiah","Esther","Job","Psalms","Proverbs","Ecclesiastes","Song of Solomon","Isaiah","Jeremiah","Lamentations","Ezekiel","Daniel","Hosea","Joel","Amos","Obadiah","Jonah","Micah","Nahum","Habakkuk","Zephaniah","Haggai","Zechariah","Malachi","Matthew","Mark","Luke","John","Acts","Romans","1 Corinthians","2 Corinthians","Galatians","Ephesians","Philippians","Colossians","1 Thessalonians","2 Thessalonians","1 Timothy","2 Timothy","Titus","Philemon","Hebrews","James","1 Peter","2 Peter","1 John","2 John","3 John","Jude","Revelation"];
+            const bSel = document.getElementById('bookSelect');
+            const cSel = document.getElementById('chapterSelect');
+            const vSel = document.getElementById('verseSelect');
+            books.forEach(b => bSel.add(new Option(b, b)));
+            for (let i = 1; i <= 150; i++) cSel.add(new Option(i, i));
+            for (let i = 1; i <= 176; i++) vSel.add(new Option(i, i));
+        }
+
+        async function fetchSearchVerse() {
+            const b = document.getElementById('bookSelect').value;
+            const c = document.getElementById('chapterSelect').value;
+            const v = document.getElementById('verseSelect').value;
+            const tr = document.getElementById('translationSelect').value;
+            if (!c) { showToast("Please select a chapter.", "error"); return; }
+
+            const out = document.getElementById('searchOutput');
+            const btn = document.getElementById('readBtn');
+            out.style.display = 'block';
+            out.innerHTML = `<div style="text-align:center; padding:20px; color:var(--text-muted);"><div class="spinner" style="border-color:var(--primary); border-top-color:transparent; margin:0 auto;"></div><p style="margin-top:10px;">Loading ${b} ${c}…</p></div>`;
+            btn.innerHTML = '<div class="spinner"></div> Loading…';
+            btn.disabled = true;
+
+            try {
+                const res = await fetch(`https://bible-api.com/${encodeURIComponent(`${b} ${c}`)}?translation=${tr}`);
+                const data = await res.json();
+
+                let textStr = "", rawText = "";
+                data.verses.forEach(vs => {
+                    let clean = vs.text.replace(/<[^>]*>?/gm, '').trim();
+                    rawText += clean + " ";
+                    if (v && vs.verse == v) {
+                        targetBookmarkText = clean;
+                        targetBookmarkRef = `${vs.book_name} ${vs.chapter}:${vs.verse} (${tr.toUpperCase()})`;
+                        textStr += `<span id="verse-${vs.verse}" class="verse-num">${vs.verse}</span><span class="highlighted-verse"><strong>${clean}</strong></span> `;
+                    } else {
+                        textStr += `<span id="verse-${vs.verse}" class="verse-num">${vs.verse}</span>${clean} `;
+                    }
+                });
+                if (!v) { targetBookmarkText = rawText.trim(); targetBookmarkRef = `${b} ${c} (${tr.toUpperCase()})`; }
+
+                const safe = s => s.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                out.innerHTML = `
+                    <div class="card-header">
+                        <span class="reference-badge"><i class='bx bx-book-open'></i> ${targetBookmarkRef}</span>
+                        <div class="card-actions">
+                            <button class="icon-btn" onclick="toggleAudio('${safe(textStr)}', this)" title="Listen"><i class='bx bx-play'></i></button>
+                            <button class="icon-btn" onclick="saveToVault('${safe(targetBookmarkRef)}', '${safe(targetBookmarkText)}')" title="Save to Vault"><i class='bx bx-bookmark-plus'></i></button>
+                            <button class="icon-btn" onclick="generateViralImage('${safe(targetBookmarkText)}', '${safe(targetBookmarkRef)}')" title="Generate Image"><i class='bx bx-image-alt'></i></button>
+                        </div>
+                    </div>
+                    <div class="scripture-text">${textStr}</div>`;
+
+                if (v) {
+                    setTimeout(() => {
+                        const el = document.getElementById(`verse-${v}`);
+                        if (el) el.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    }, 150);
+                }
+            } catch (e) {
+                out.innerHTML = `<div class="empty-state"><i class='bx bx-wifi-off'></i><p>Error loading chapter. Check your connection.</p></div>`;
+            } finally {
+                btn.innerHTML = '<i class=\'bx bx-book-open\'></i> Read Chapter';
+                btn.disabled = false;
+            }
+        }
+
+        // ── KEYWORD SEARCH ────────────────────────────────────────────
+        async function searchKeyword() {
+            const query = document.getElementById('keywordInput').value.trim();
+            if (!query) { showToast("Enter a keyword to search.", "error"); return; }
+            const tr = document.getElementById('kwTranslation').value;
+            const results = document.getElementById('keywordResults');
+            results.innerHTML = `<div class="empty-state"><div class="spinner" style="margin:0 auto; border-color:var(--primary); border-top-color:transparent;"></div><p style="margin-top:10px;">Searching for "${query}"…</p></div>`;
+
+            try {
+                // Use bible-api search endpoint
+                const res = await fetch(`https://bible-api.com/${encodeURIComponent(query)}?translation=${tr}`);
+                const data = await res.json();
+                
+                if (data.error || !data.verses || data.verses.length === 0) {
+                    results.innerHTML = `<div class="empty-state"><i class='bx bx-search-alt'></i><p>No results for "${query}". Try a different word or phrase.</p></div>`;
+                    return;
+                }
+
+                let html = `<p class="section-title" style="margin-bottom:10px;"><i class='bx bx-list-ul'></i> ${data.verses.length} result${data.verses.length !== 1 ? 's' : ''} found</p>`;
+                data.verses.forEach(vs => {
+                    const clean = vs.text.replace(/<[^>]*>?/gm, '').trim();
+                    const ref = `${vs.book_name} ${vs.chapter}:${vs.verse} (${tr.toUpperCase()})`;
+                    const safe = s => s.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                    const highlighted = clean.replace(new RegExp(`(${query})`, 'gi'), '<mark style="background:var(--accent-glow); color:var(--accent);">$1</mark>');
+                    html += `<div class="keyword-result-item">
+                        <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:6px;">
+                            <span class="keyword-result-ref">${ref}</span>
+                            <div style="display:flex; gap:6px;">
+                                <button class="icon-btn" style="width:32px;height:32px;font-size:1rem;" onclick="saveToVault('${safe(ref)}', '${safe(clean)}')" title="Save"><i class='bx bx-bookmark-plus'></i></button>
+                                <button class="icon-btn" style="width:32px;height:32px;font-size:1rem;" onclick="toggleAudio('${safe(clean)}', this)" title="Listen"><i class='bx bx-play'></i></button>
+                            </div>
+                        </div>
+                        <div class="scripture-text" style="font-size:0.95rem;">${highlighted}</div>
+                    </div>`;
+                });
+                results.innerHTML = html;
+            } catch (e) {
+                results.innerHTML = `<div class="empty-state"><i class='bx bx-wifi-off'></i><p>Search failed. Check your connection.</p></div>`;
+            }
+        }
+
+        // ── VAULT ─────────────────────────────────────────────────────
+        async function saveToVault(ref, text) {
+            if (!currentUid) return;
+            if (!currentUserProfile.vault) currentUserProfile.vault = [];
+            if (currentUserProfile.vault.some(v => v.ref === ref)) { showToast("Already saved to Vault.", "info"); return; }
+            currentUserProfile.vault.unshift({ ref, text: text.replace(/<[^>]*>?/gm, '').trim(), date: new Date().toISOString(), color: "", note: "" });
+            renderVault();
+            showToast("Saved to Vault! ✓", "success");
+            db.collection('users').doc(currentUid).update({ vault: currentUserProfile.vault });
+        }
+
+        async function updateVaultData(ref, field, value) {
+            if (!currentUid) return;
+            const idx = currentUserProfile.vault.findIndex(v => v.ref === ref);
+            if (idx > -1) {
+                currentUserProfile.vault[idx][field] = value;
+                db.collection('users').doc(currentUid).update({ vault: currentUserProfile.vault });
+                if (field === 'color') renderVault();
+            }
+        }
+
+        async function removeFromVault(ref) {
+            if (!confirm("Remove this verse from your Vault?")) return;
+            currentUserProfile.vault = currentUserProfile.vault.filter(v => v.ref !== ref);
+            renderVault();
+            showToast("Removed from Vault.", "info");
+            db.collection('users').doc(currentUid).update({ vault: currentUserProfile.vault });
+        }
+
+        function renderVault() {
+            const cont = document.getElementById('vaultList');
+            const filterVal = (document.getElementById('vaultSearch')?.value || '').toLowerCase();
+            let vault = (currentUserProfile.vault || []).filter(item =>
+                !filterVal || item.text.toLowerCase().includes(filterVal) || item.ref.toLowerCase().includes(filterVal)
+            );
+
+            if (vault.length === 0) {
+                cont.innerHTML = `<div class="empty-state"><i class='bx bx-bookmark'></i><p>${filterVal ? 'No results match your filter.' : 'Your vault is empty.\nSave verses from the Daily or Search tabs.'}</p></div>`;
+                return;
+            }
+
+            const colors = [
+                { hex: '#FDE047', label: 'Gold' },
+                { hex: '#86EFAC', label: 'Green' },
+                { hex: '#93C5FD', label: 'Blue' },
+                { hex: '#F9A8D4', label: 'Pink' }
+            ];
+
+            let html = '';
+            vault.forEach(item => {
+                const safe = s => s.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+                const bg = item.color ? `background-color: ${item.color}18;` : '';
+                const bd = item.color ? `border-color: ${item.color};` : '';
+                const dateStr = item.date ? new Date(item.date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : '';
+                const dots = colors.map(c => `<div class="color-dot ${item.color === c.hex ? 'selected' : ''}" style="background:${c.hex};" title="${c.label}" onclick="updateVaultData('${safe(item.ref)}', 'color', '${c.hex}')"></div>`).join('');
+
+                html += `<div class="vault-item" style="${bg}">
+                    <div class="card-header" style="margin-bottom:0;">
+                        <span class="reference-badge" style="margin:0; font-size:0.68rem;">${item.ref}</span>
+                        <div class="card-actions">
+                            <button class="icon-btn" onclick="toggleAudio('${safe(item.text)}', this)" title="Listen"><i class='bx bx-play'></i></button>
+                            <button class="icon-btn danger" onclick="removeFromVault('${safe(item.ref)}')" title="Remove"><i class='bx bx-trash'></i></button>
+                        </div>
+                    </div>
+                    <p class="vault-text" style="${bd}">"${item.text}"</p>
+                    <div class="vault-meta">${dateStr}</div>
+                    <div class="color-picker">
+                        <span class="color-label">Tag:</span>
+                        ${dots}
+                        <div class="color-dot" style="border:2px solid var(--border); background:transparent;" title="Clear" onclick="updateVaultData('${safe(item.ref)}', 'color', '')"></div>
+                    </div>
+                    <textarea class="vault-note" placeholder="Personal notes…" onchange="updateVaultData('${safe(item.ref)}', 'note', this.value)">${item.note || ''}</textarea>
+                </div>`;
+            });
+            cont.innerHTML = html;
+        }
+
+        // ── JOURNAL ───────────────────────────────────────────────────
+        async function saveReflection() {
+            const input = document.getElementById('daily-reflection').value.trim();
+            if (!input) { showToast("Write a reflection first.", "error"); return; }
+            if (!currentUserProfile.journal) currentUserProfile.journal = [];
+            const entry = { text: input, date: new Date().toDateString(), timestamp: Date.now() };
+            currentUserProfile.journal.unshift(entry);
+            document.getElementById('daily-reflection').value = '';
+            document.getElementById('reflection-count').textContent = '0 / 1000';
+            renderJournal();
+            switchView('journal', document.getElementById('nav-journal'));
+            showToast("Reflection saved to Journal! ✓", "success");
+            try { await db.collection('users').doc(currentUid).update({ journal: currentUserProfile.journal }); } catch(e) {}
+        }
+
+        function deleteJournalEntry(timestamp) {
+            if (!confirm("Delete this journal entry?")) return;
+            currentUserProfile.journal = currentUserProfile.journal.filter(j => j.timestamp !== timestamp);
+            renderJournal();
+            showToast("Entry deleted.", "info");
+            db.collection('users').doc(currentUid).update({ journal: currentUserProfile.journal });
+        }
+
+        function renderJournal() {
+            const cont = document.getElementById('journalList');
+            const journal = currentUserProfile.journal || [];
+            const countEl = document.getElementById('journal-count');
+            if (countEl) countEl.textContent = `${journal.length} entr${journal.length !== 1 ? 'ies' : 'y'}`;
+
+            if (journal.length === 0) {
+                cont.innerHTML = `<div class="empty-state"><i class='bx bx-book-heart'></i><p>Your journal is empty.\nWrite your first reflection on the Daily tab.</p></div>`;
+                return;
+            }
+
+            let html = '';
+            journal.forEach(item => {
+                html += `<div class="journal-entry">
+                    <div class="journal-entry-header">
+                        <span class="journal-date"><i class='bx bx-calendar'></i> ${item.date}</span>
+                        <button class="icon-btn danger" style="width:32px;height:32px;font-size:0.95rem;" onclick="deleteJournalEntry(${item.timestamp})" title="Delete"><i class='bx bx-trash'></i></button>
+                    </div>
+                    <p>${item.text.replace(/</g, "&lt;")}</p>
+                </div>`;
+            });
+            cont.innerHTML = html;
+        }
+
+        // ── AUDIO ─────────────────────────────────────────────────────
+        function toggleAudio(txt, btn) {
+            if (!("speechSynthesis" in window)) { showToast("Text-to-speech not supported on this device.", "error"); return; }
+            if (isSpeaking) {
+                window.speechSynthesis.cancel();
+                isSpeaking = false;
+                document.querySelectorAll('.bx-pause').forEach(el => el.className = 'bx bx-play');
+            } else {
+                const clean = txt.replace(/<[^>]*>?/gm, '').trim();
+                const utt = new SpeechSynthesisUtterance(clean);
+                utt.rate = 0.88;
+                utt.pitch = 1.05;
+                utt.onend = () => {
+                    isSpeaking = false;
+                    document.querySelectorAll('.bx-pause').forEach(el => el.className = 'bx bx-play');
+                };
+                window.speechSynthesis.speak(utt);
+                isSpeaking = true;
+                if (btn) btn.querySelector('i').className = 'bx bx-pause';
+            }
+        }
+
+        // ── SHARE ─────────────────────────────────────────────────────
+        async function shareVerse(txt, ref) {
+            const clean = txt.replace(/<[^>]*>?/gm, '').trim();
+            if (!clean) return;
+            if (navigator.share) {
+                try { await navigator.share({ title: 'Clarity Bible', text: `"${clean}"\n— ${ref}\n\nShared via Clarity Bible` }); } catch (err) {}
+            } else {
+                try {
+                    await navigator.clipboard.writeText(`"${clean}"\n— ${ref}`);
+                    showToast("Verse copied to clipboard!", "success");
+                } catch(e) {}
+            }
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // IMAGE GENERATION — fully working, cross-browser safe
+        // ══════════════════════════════════════════════════════════════
+
+        // Cross-browser rounded rect helper (replaces ctx.roundRect which isn't universal)
+        function drawRoundRect(ctx, x, y, w, h, r) {
+            r = Math.min(r, w / 2, h / 2);
+            ctx.beginPath();
+            ctx.moveTo(x + r, y);
+            ctx.lineTo(x + w - r, y);
+            ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+            ctx.lineTo(x + w, y + h - r);
+            ctx.quadraticCurveTo(x + w, y + h, x + w - r, y + h);
+            ctx.lineTo(x + r, y + h);
+            ctx.quadraticCurveTo(x, y + h, x, y + h - r);
+            ctx.lineTo(x, y + r);
+            ctx.quadraticCurveTo(x, y, x + r, y);
+            ctx.closePath();
+        }
+
+        // Wrap text and return the lines array
+        function wrapText(ctx, text, maxWidth) {
+            const words = text.split(' ');
+            const lines = [];
+            let line = '';
+            for (let i = 0; i < words.length; i++) {
+                const test = line + (line ? ' ' : '') + words[i];
+                if (ctx.measureText(test).width > maxWidth && line) {
+                    lines.push(line);
+                    line = words[i];
+                } else {
+                    line = test;
+                }
+            }
+            if (line) lines.push(line);
+            return lines;
+        }
+
+        // Auto-size font so text always fits nicely on canvas
+        function getFontSize(ctx, text, maxWidth, maxHeight, startSize, minSize) {
+            let size = startSize;
+            while (size >= minSize) {
+                ctx.font = `italic ${size}px Georgia, serif`;
+                const lines = wrapText(ctx, text, maxWidth);
+                const totalHeight = lines.length * (size * 1.45);
+                if (totalHeight <= maxHeight) return { size, lines };
+                size -= 4;
+            }
+            ctx.font = `italic ${minSize}px Georgia, serif`;
+            return { size: minSize, lines: wrapText(ctx, text, maxWidth) };
+        }
+
+        async function generateViralImage(text, ref) {
+            // Strip any HTML tags from text
+            const cleanText = text.replace(/<[^>]*>?/gm, '').replace(/\s+/g, ' ').trim();
+            const cleanRef  = ref.replace(/<[^>]*>?/gm, '').trim();
+
+            if (!cleanText) { showToast("No verse text to generate image.", "error"); return; }
+            showToast("Generating image card…", "info");
+
+            const canvas = document.getElementById('shareCanvas');
+            const ctx = canvas.getContext('2d');
+            const W = 1080, H = 1920;
+            canvas.width = W; canvas.height = H;
+
+            // ── Background gradient ──
+            const grd = ctx.createLinearGradient(0, 0, 0, H);
+            grd.addColorStop(0,   "#04091a");
+            grd.addColorStop(0.5, "#0b1633");
+            grd.addColorStop(1,   "#04091a");
+            ctx.fillStyle = grd;
+            ctx.fillRect(0, 0, W, H);
+
+            // ── Decorative glow circles ──
+            const paintGlow = (cx, cy, radius, color) => {
+                const radGrd = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius);
+                radGrd.addColorStop(0,   color);
+                radGrd.addColorStop(1,   'rgba(0,0,0,0)');
+                ctx.fillStyle = radGrd;
+                ctx.beginPath(); ctx.arc(cx, cy, radius, 0, Math.PI * 2); ctx.fill();
+            };
+            paintGlow(180,  500,  500, 'rgba(26, 80, 180, 0.25)');
+            paintGlow(900,  1500, 550, 'rgba(249, 115, 22, 0.18)');
+            paintGlow(540,  960,  380, 'rgba(30, 70, 160, 0.12)');
+
+            // ── Top decorative line ──
+            ctx.strokeStyle = 'rgba(249,115,22,0.6)';
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(120, 220); ctx.lineTo(960, 220); ctx.stroke();
+
+            // ── App name (top) ──
+            ctx.fillStyle = 'rgba(255,255,255,0.5)';
+            ctx.font = '500 42px sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('CLARITY BIBLE', 540, 310);
+
+            // ── Big decorative quote mark ──
+            ctx.fillStyle = 'rgba(249,115,22,0.10)';
+            ctx.font = 'bold 600px Georgia, serif';
+            ctx.textAlign = 'left';
+            ctx.textBaseline = 'top';
+            ctx.fillText('\u201C', 40, 480);
+
+            // ── Auto-sized verse text, vertically centred in middle zone ──
+            const textZoneTop    = 580;
+            const textZoneBottom = 1550;
+            const textZoneHeight = textZoneBottom - textZoneTop;
+            const textMaxWidth   = 860;
+
+            const { size, lines } = getFontSize(ctx, cleanText, textMaxWidth, textZoneHeight - 160, 76, 40);
+            const lineH    = size * 1.5;
+            const blockH   = lines.length * lineH;
+            let textY      = textZoneTop + (textZoneHeight - blockH) / 2;
+
+            ctx.font = `italic ${size}px Georgia, serif`;
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'top';
+
+            // Subtle text shadow for readability
+            ctx.shadowColor   = 'rgba(0,0,0,0.7)';
+            ctx.shadowBlur    = 28;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 6;
+
+            ctx.fillStyle = '#ffffff';
+            lines.forEach(l => { ctx.fillText(l, 540, textY); textY += lineH; });
+
+            ctx.shadowColor = 'transparent'; ctx.shadowBlur = 0;
+
+            // ── Reference pill ──
+            const pillY = Math.min(textY + 60, 1680); // never overflow canvas
+            const refText = cleanRef.toUpperCase();
+            ctx.font = 'bold 38px sans-serif';
+            ctx.textAlign = 'center';
+            const pillW = Math.min(ctx.measureText(refText).width + 80, 900);
+            const pillH = 90;
+            const pillX = 540 - pillW / 2;
+
+            ctx.fillStyle = '#f97316';
+            drawRoundRect(ctx, pillX, pillY, pillW, pillH, 45);
+            ctx.fill();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(refText, 540, pillY + pillH / 2);
+
+            // ── Bottom decorative line ──
+            ctx.strokeStyle = 'rgba(249,115,22,0.6)';
+            ctx.lineWidth = 4;
+            ctx.beginPath(); ctx.moveTo(120, 1820); ctx.lineTo(960, 1820); ctx.stroke();
+
+            // ── Bottom branding ──
+            ctx.fillStyle = 'rgba(255,255,255,0.35)';
+            ctx.font = '400 36px sans-serif';
+            ctx.textBaseline = 'alphabetic';
+            ctx.fillText('clarityBible.app', 540, 1880);
+
+            // ── Export ──
+            canvas.toBlob(async (blob) => {
+                if (!blob) { showToast("Image generation failed.", "error"); return; }
+                const file = new File([blob], 'clarity-verse.png', { type: 'image/png' });
+                // Try native share with file (works on Android Chrome & iOS Safari)
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({ files: [file], title: 'Clarity Bible', text: `${cleanRef}\n\nShared via Clarity Bible` });
+                        return;
+                    } catch (err) {
+                        if (err.name === 'AbortError') return; // user cancelled — no error toast
+                    }
+                }
+                // Fallback: trigger download
+                const url  = URL.createObjectURL(blob);
+                const link = document.createElement('a');
+                link.href = url; link.download = 'clarity-verse.png';
+                document.body.appendChild(link); link.click();
+                document.body.removeChild(link);
+                setTimeout(() => URL.revokeObjectURL(url), 1000);
+                showToast("Image saved to device! 🖼️", "success");
+            }, 'image/png');
+        }
+
+        // ══════════════════════════════════════════════════════════════
+        // NOTIFICATIONS — Service Worker + scheduled daily reminders
+        // ══════════════════════════════════════════════════════════════
+
+        // Inline Service Worker as a Blob so it works without a separate sw.js file
+        const SW_CODE = `
+            const CACHE = 'clarity-v1';
+            const ASSETS = ['/'];
+
+            self.addEventListener('install', e => { self.skipWaiting(); });
+            self.addEventListener('activate', e => { e.waitUntil(self.clients.claim()); });
+
+            // Handle push events (from server or self-triggered)
+            self.addEventListener('push', e => {
+                const data = e.data ? e.data.json() : {};
+                e.waitUntil(
+                    self.registration.showNotification(data.title || 'Clarity Bible', {
+                        body:    data.body  || 'Your daily verse is ready. Open the app to read it.',
+                        icon:    data.icon  || '/icon-192.png',
+                        badge:   data.badge || '/icon-192.png',
+                        tag:     'clarity-daily',
+                        renotify: true,
+                        data:    { url: data.url || '/' }
+                    })
+                );
+            });
+
+            // Handle notification click → open/focus app
+            self.addEventListener('notificationclick', e => {
+                e.notification.close();
+                e.waitUntil(
+                    clients.matchAll({ type: 'window', includeUncontrolled: true }).then(list => {
+                        for (const client of list) {
+                            if ('focus' in client) return client.focus();
+                        }
+                        return clients.openWindow(e.notification.data?.url || '/');
+                    })
+                );
+            });
+
+            // Message handler — lets main thread trigger a test notification
+            self.addEventListener('message', e => {
+                if (e.data && e.data.type === 'SHOW_NOTIFICATION') {
+                    self.registration.showNotification(e.data.title || 'Clarity Bible', {
+                        body:    e.data.body  || 'Your daily verse awaits.',
+                        icon:    '/icon-192.png',
+                        badge:   '/icon-192.png',
+                        tag:     'clarity-daily',
+                        renotify: true
+                    });
+                }
+            });
+        `;
+
+        let swRegistration = null;
+
+        async function registerServiceWorker() {
+            if (!('serviceWorker' in navigator)) return;
+            try {
+                const blob = new Blob([SW_CODE], { type: 'application/javascript' });
+                const swURL = URL.createObjectURL(blob);
+                swRegistration = await navigator.serviceWorker.register(swURL, { scope: '/' });
+                console.log('SW registered');
+            } catch (err) {
+                // Blob SW registration may be blocked on some origins — silently ignore
+                console.warn('SW registration failed:', err);
+            }
+        }
+
+        function updateBellIcon(granted) {
+            const bellBtn = document.querySelector('.header-icon[title="Enable Alerts"] i');
+            if (!bellBtn) return;
+            if (granted) {
+                bellBtn.className = 'bx bx-bell-ring';
+                bellBtn.parentElement.style.color = 'var(--accent)';
+                bellBtn.parentElement.style.borderColor = 'var(--accent)';
+            } else {
+                bellBtn.className = 'bx bx-bell';
+                bellBtn.parentElement.style.color = '';
+                bellBtn.parentElement.style.borderColor = '';
+            }
+        }
+
+        // Send a real notification through the Service Worker
+        async function sendNotificationViaSW(title, body) {
+            // Try SW message first
+            if (swRegistration && swRegistration.active) {
+                swRegistration.active.postMessage({ type: 'SHOW_NOTIFICATION', title, body });
+                return;
+            }
+            // Fallback: direct Notification API
+            if (Notification.permission === 'granted') {
+                new Notification(title, {
+                    body,
+                    icon: '/icon-192.png',
+                    badge: '/icon-192.png',
+                    tag: 'clarity-daily'
+                });
+            }
+        }
+
+        // Schedule a daily local reminder using setTimeout tuned to the chosen hour
+        function scheduleDailyReminder(hourOfDay = 8) {
+            // Clear any existing timer
+            if (window._notifTimer) clearTimeout(window._notifTimer);
+
+            const now  = new Date();
+            const next = new Date();
+            next.setHours(hourOfDay, 0, 0, 0);
+            if (next <= now) next.setDate(next.getDate() + 1); // next day if past
+
+            const msUntil = next - now;
+            window._notifTimer = setTimeout(async () => {
+                await sendNotificationViaSW(
+                    '📖 Your Daily Verse Awaits',
+                    `Open Clarity Bible to read today's verse and keep your streak alive! 🔥`
+                );
+                scheduleDailyReminder(hourOfDay); // reschedule for tomorrow
+            }, msUntil);
+
+            console.log(`Daily reminder scheduled in ${Math.round(msUntil / 60000)} min`);
+        }
+
+        async function requestNotifications() {
+            if (!('Notification' in window)) {
+                showToast('Notifications not supported on this browser.', 'error');
+                return;
+            }
+
+            if (Notification.permission === 'granted') {
+                // Already granted — send a test notification now
+                await sendNotificationViaSW(
+                    '🔔 Notifications Active',
+                    'You\'ll get your daily verse reminder every morning at 8 AM.'
+                );
+                showToast('Notifications already enabled! ✓', 'success');
+                updateBellIcon(true);
+                return;
+            }
+
+            if (Notification.permission === 'denied') {
+                showToast('Notifications blocked. Please enable them in your browser settings.', 'error');
+                return;
+            }
+
+            // Request permission
+            const permission = await Notification.requestPermission();
+            if (permission === 'granted') {
+                updateBellIcon(true);
+                localStorage.setItem('notif_enabled', '1');
+                localStorage.setItem('notif_hour', '8');
+
+                // Register SW then send welcome notification
+                await registerServiceWorker();
+                setTimeout(async () => {
+                    await sendNotificationViaSW(
+                        '✅ Clarity Bible Alerts Enabled',
+                        'You\'ll receive your daily verse at 8 AM every morning. Stay in the Word! 🙏'
+                    );
+                }, 800);
+
+                scheduleDailyReminder(8);
+                showToast('Daily reminders enabled! You\'ll be notified at 8 AM. 🔔', 'success');
+            } else {
+                showToast('Permission denied. You can enable notifications in browser settings.', 'error');
+                updateBellIcon(false);
+            }
+        }
+
+        // On app load — restore notification schedule if previously granted
+        function restoreNotifications() {
+            if (Notification.permission === 'granted' && localStorage.getItem('notif_enabled') === '1') {
+                updateBellIcon(true);
+                registerServiceWorker().then(() => {
+                    const hour = parseInt(localStorage.getItem('notif_hour') || '8', 10);
+                    scheduleDailyReminder(hour);
+                });
+            }
+        }
+
+        // Init on page load
+        window.addEventListener('load', () => {
+            registerServiceWorker();
+            restoreNotifications();
+        });
+    </script>
+</body>
+</html>

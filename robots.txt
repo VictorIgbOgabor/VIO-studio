@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ogabor-mercy-akpana.pages.dev/sitemap.xml
